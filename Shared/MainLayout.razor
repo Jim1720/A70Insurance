@@ -1,0 +1,127 @@
+﻿@inherits LayoutComponentBase
+
+@inject Blazored.SessionStorage.ISyncSessionStorageService sessionStorage
+  
+
+<!-- -div class="sidebar">
+    <NavMenu />
+</!-div-->
+
+<style>
+    a {
+        color: white;
+        font-size: larger;
+    }
+    .out { color: lightgray}
+    .in  { color: gold}
+
+</style>
+
+<div class="main">
+    <div class="top-row px-4" style="background-color:black">
+
+        <a href="" class="ml-md-auto" style="color:aqua">A70Insurance</a>
+
+        @if (signedIn == false)
+        {
+
+            <a href="/" class="ml-md-auto">Splash</a>
+
+            <a href="/classic" class="ml-md-auto">Classic</a>
+
+            <a href="/register" class="ml-md-auto">Register</a>
+
+            <a href="/signin" class="ml-md-auto">Signin</a>
+
+            <a href="/about" class="ml-md-auto">About</a>
+
+            <a href="/admin" class="ml-md-auto">Admin</a>
+
+        }
+
+        @if (signedIn == true)
+        {
+
+
+            <a href="/menu" class="ml-md-auto">Menu</a>
+
+            <a href="/claim" class="ml-md-auto">Claim</a>
+
+            <a href="/history" class="ml-md-auto">History</a>
+
+            <a href="/" @onclick="signout" class="ml-md-auto">Sign Out</a>
+
+
+
+        }
+
+        <a href="/" class="@at ml-md-auto">@info</a>
+
+    </div>
+
+    <div class="content px-4">
+
+        <CascadingValue Value=SignChange>
+            @Body
+        </CascadingValue>
+
+    </div>
+</div>
+
+@code { 
+
+    public string info = "Signed Out";
+    public string at = "out";
+
+    private bool signedIn = false;
+    private string custFirst = "";
+    private string custLast = "";
+    private string custId = "";
+
+
+    EventCallback<string> SignChange => EventCallback.Factory.Create<string>(this, Change);
+
+
+    public  void Change(string action)
+    {
+
+        bool signin = (action ==  "in") ? true : false;
+
+        signedIn = signin;
+
+        if (signin)
+        {
+
+            custFirst = sessionStorage.GetItem<string>("custFirst");
+            custLast = sessionStorage.GetItem<string>("custLast");
+            custId = sessionStorage.GetItem<string>("custId");
+
+            custId = custId.Trim();
+            custFirst = custFirst.Trim();
+            custLast = custLast.Trim();
+
+            info = custId + " " + custFirst + " " + custLast;
+            at = "in";
+
+        }
+        else
+        {
+            info = "Signed Out";
+            at = "out";
+        }
+
+        StateHasChanged();
+
+    }
+
+    private void signout()
+    {
+
+        sessionStorage.SetItem("custId", ""); // signout customer for back door checking
+        Change("out");
+    }
+
+
+
+
+}

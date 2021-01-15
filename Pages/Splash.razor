@@ -1,0 +1,57 @@
+﻿@page "/"
+
+
+    <!-- copied from a11 -->
+    <div class="container">
+
+
+        <div style='margin-left: 320px'>
+            <div class="row justify-content-left">
+                <font family="arial" font-size="60" style="color:aqua">
+                    <h1 display-1><i> The Insurance Company</i></h1>
+                </font>
+            </div>
+        </div>
+
+
+
+        <div class="row-md-6">
+
+            <img alt="Second slide" src="/pics/rock.jpg" class="img-fluid" style="margin: 10px">
+
+        </div> 
+
+    <div style='margin-left: 270px'>
+        <div class="row justify-content-left">
+            <font family="arial" font-size="60" style="color:white">
+                <h1 display-1><i> Now is the time to buy insurance!</i></h1>
+            </font>
+        </div>
+    </div>
+
+
+    <footer width='95%'>
+        <br>
+        <!-- a60 additions at bottom -->
+        <text class='t1' style="color:white;">2020 - A70Insurance - Blazor</text>
+        <text class='t1' style='color:gray;'>Find out info here</text>
+        <a href="/info" style="color: white">Info</a>
+        <text class='t1' style='color:gray;'>Find about here...</text>
+        <a href='/about' style="color: white">About</a>
+        <text class='t1' style='color:gray;'>Time to buy...</text>
+        <a href='/register' style="color: white">@friendlyDate</a>
+        <text class='t1' style='color:gray;'> This is a demonstration website</text>
+
+    </footer>
+
+   </div>
+
+
+    @code {
+
+        static System.DateTime timeToBuy = System.DateTime.Now;
+        string friendlyDate = timeToBuy.ToString("MMMM d yyyy");
+
+
+
+    }

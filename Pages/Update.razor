@@ -1,0 +1,448 @@
+﻿
+@page "/update"
+
+@using System.ComponentModel.DataAnnotations;
+
+@inject HttpClient http
+
+@inject NavigationManager navigationManager
+
+@inject Blazored.SessionStorage.ISyncSessionStorageService sessionStorage 
+
+@using A70Insurance.Models;
+
+
+@using Newtonsoft.Json
+
+
+<style>
+
+    .b1:hover {
+        color: goldenrod;
+        background-color: black
+    }
+
+    .b1 {
+        color: white;
+        background-color: blue;
+        margin: 12px;
+        font-size: larger;
+        padding: 10px;
+    }
+
+    .lab {
+        color: dodgerblue;
+        font-size: large;
+    }
+
+    h2 {
+        color: white;
+        margin-left: 240px;
+    }
+
+
+
+    .st1 {
+        font-family: Arial;
+        font-size: larger
+    }
+
+    .d1 {
+        margin-right: 35px;
+    }
+</style>
+
+<div class="container">
+
+    <h4 margin="50px" align="center" style="color:white">Update Customer</h4>
+    <br />
+    <div style='margin-left: 165px'>
+
+
+
+        <div class="row justify-content-md-left">
+            <div class="d1 col-xs-3">
+                <label style="color:dodgerblue;" asp-for="CustFirst" class="st1 control-label">First Name:</label>
+                <input @bind-value="@customer.CustFirst" class="form-control" placeholder="First Name" type="text" />
+            </div>
+            <div class="d1 col-xs-3">
+                <label style="color:dodgerblue;" asp-for="CustMiddle" class="st1 control-label">Middle:</label>
+                <input @bind-value="@customer.CustMiddle" class="form-control" placeholder="Middle Name" type="text" />
+            </div>
+            <div class="d1 col-xs-3">
+                <label style="color:dodgerblue;" asp-for="CustLast" class="st1 control-label">Last Name:</label>
+                <input @bind-value="@customer.CustLast" class="form-control" placeholder="Last Name" type="text" />
+            </div>
+        </div> <!-- end row 1 -->
+
+        <div class="row justify-content-md-left">
+
+            <div class="d1 col-xs-3">
+                <label style="color:dodgerblue;" asp-for="@customer.CustPassword" class="st1 control-label">Password:</label>
+                <input @bind-value="@customer.CustPassword" class="form-control" placeholder="Password" type="password" />
+            </div>
+            <div class="d1 col-xs-3">
+                <label style="color:dodgerblue;" asp-for="@customer.CustPassword" class="st1 control-label">Confirm Password:</label>
+                <input @bind-value="@customer.ConfirmPassword" class="form-control" placeholder="Confirm Password" type="password" />
+            </div>
+
+
+        </div> <!-- end row 2 -->
+
+        <div class="row justify-content-md-left">
+            <div class="d1 col-xs-3">
+                <label style="color:dodgerblue;" asp-for="@customer.CustEmail" class="st1 control-label">Email:</label>
+                <input @bind-value="@customer.CustEmail" class="form-control" placeholder="Email" type="text" />
+            </div>
+            <div class="d1 col-xs-3">
+                <label style="color:dodgerblue;" asp-for="@customer.CustPhone" class="st1 control-label">Phone:</label>
+                <input @bind-value="@customer.CustPhone" class="form-control" placeholder="Phone" type="text" />
+            </div>
+        </div>
+
+        <div class="row justify-content-md-left">
+            <div class="d1 col-xs-3">
+                <label style="color:dodgerblue;" asp-for="@customer.ScreenBirthDate" class="st1 control-label">Birth Date:</label>
+                <input @bind-value="@customer.ScreenBirthDate" class="form-control" placeholder="mm/dd/yyyy" type="text" />
+            </div>
+            <div class="d1 col-xs-3">
+                <label style="color:dodgerblue;" asp-for="@customer.CustGender" class="st1 control-label">Gender:</label>
+                <select @bind="@customer.CustGender" class="form-control">
+                    @for (var i = 0; i < genders.Count; i++)
+                    {
+                        <option>@genders[i]</option>
+                    }
+                </select>
+
+            </div>
+
+            <div class="d1 col-xs-3">
+                <label style="color:dodgerblue;" asp-for="@customer.CustPlan" class="st1 control-label">Selected Plan:</label>
+                <br><div style="margin-left: 15px;font-size:larger; color:white;">@customer.CustPlan</div>
+            </div>
+
+        </div> <!-- end row 2 -->
+
+        <div class="row justify-content-md-left">
+            <div class="d1 col-xs-3">
+                <label style="color:dodgerblue;" asp-for="@customer.CustAddr1" class="st1 control-label">Address 1:</label>
+                <input @bind-value="@customer.CustAddr1" class="form-control" placeholder="Address 1" type="text" />
+            </div>
+            <div class="d1 col-xs-3">
+                <label style="color:dodgerblue;" asp-for="@customer.CustAddr2" class="st1 control-label">Address 2:</label>
+                <input @bind-value="@customer.CustAddr2" class="form-control" placeholder="Address 2" type="text" />
+            </div>
+        </div> <!-- end row 4 -->
+
+        <div class="row justify-content-md-left">
+            <div class="d1 col-xs-3">
+                <label style="color:dodgerblue;" asp-for="@customer.CustCity" class="st1 control-label">City:</label>
+                <input @bind-value="@customer.CustCity" class="form-control" placeholder="City" type="text" />
+            </div>
+            <div class="d1 col-xs-3">
+                <label style="color:dodgerblue;" asp-for="@customer.CustState" class="st1 control-label">State:</label>
+                <select @bind="@customer.CustState" class="form-control">
+                    @for (var i = 0; i < states.Count; i++)
+                    {
+                        <option>@states[i]</option>
+                    }
+                </select>
+            </div>
+            <div class="d1 col-xs-3">
+                <label style="color:dodgerblue;" asp-for="@customer.CustZip" class="st1 control-label">Zip:</label>
+                <input @bind-value="@customer.CustZip" class="form-control" placeholder="Zip" type="text" />
+            </div>
+
+        </div>
+
+
+
+        <div class='row' style="margin-top: 30px">
+            <button @onclick="submit" style="color:white; margin-left: 250px ; margin-right: 20px"
+                    class="btn btn-outline-primary">
+                Update
+            </button>
+            <a type="button" href="/menu" style="color:white" class="btn btn-outline-primary">Menu</a>
+        </div>
+
+
+        <div class="row">
+            <span style="color:lawngreen">
+                @message
+            </span>
+        </div>
+
+    </div> <!-- margin left div -->
+</div>
+
+
+@code {
+
+
+    private string message;
+    private List<string> states = new List<string>()
+{
+        { "WA" },
+        { "CA" }
+
+    };
+    private List<string> genders = new List<string>() { "M", "F" };
+
+    private Customer customer = new Customer();
+
+
+
+
+    protected  override void OnInitialized()
+    {
+        var custId = sessionStorage.GetItem<string>("custId");
+        if (custId == null)
+        {
+            navigationManager.NavigateTo("/"); // backdoor logic 
+        }
+
+        try
+        {
+            customer = ReadCustJson();
+            sessionStorage.SetItem("OldPass", customer.CustPassword.Trim());
+
+        }
+        catch (System.Exception ex)
+        {
+            // code comes here when not signed in.
+            var m = ex.Message.ToString(); // avoid compile warning.
+
+            // needed in any component that calls back to navigation using cascading paramerter
+            // due to rendering exception when signin not used by custoner.
+
+            navigationManager.NavigateTo("/"); // backdoor logic 
+        }
+
+
+    }
+
+    private  Customer ReadCustJson()
+    {
+        var json = sessionStorage.GetItem<string>("theCustomerAsJson");
+        customer = JsonConvert.DeserializeObject<Customer>(json);
+        customer.CustFirst = customer.CustFirst.Trim();
+        customer.CustLast = customer.CustLast.Trim();
+        customer.CustMiddle = customer.CustMiddle.Trim();
+        customer.CustEmail = customer.CustEmail.Trim();
+
+        customer.ScreenBirthDate = customer.ScreenBirthDate.Trim();
+        customer.CustPhone = customer.CustPhone.Trim();
+
+        customer.CustAddr1 = customer.CustAddr1.Trim();
+        customer.CustAddr2 = customer.CustAddr2.Trim();
+
+        customer.CustCity = customer.CustCity.Trim();
+        customer.CustState = customer.CustState.Trim();
+        customer.CustZip = customer.CustZip.Trim();
+
+        return customer;
+
+    }
+
+
+
+
+    private void menu()
+    {
+
+        navigationManager.NavigateTo("/menu");
+    }
+
+    async private void submit()
+    {
+        var oldPass = sessionStorage.GetItem<string>("OldPass") ?? "missing";
+        var np = customer.CustPassword ?? "NewNotKeyed";
+        var newPass = np.Trim();
+
+
+        var aChange = (oldPass != newPass);
+
+        var confirm = customer.ConfirmPassword ?? "notKeyed";
+
+        if (aChange)
+        {
+
+            if (confirm == "notKeyed" ||
+               customer.CustPassword != customer.ConfirmPassword)
+            {
+                message = "Confirm password does not match.";
+                StateHasChanged();
+                return;
+            }
+
+        }
+
+        ValidationResult r = new ValidationResult(" ");
+        ValidationContext v = new ValidationContext(customer);
+        var result = new List<ValidationResult>();
+        message = "";
+
+        bool isDataValid = Validator.TryValidateObject(customer, v, result, true);
+        if (!isDataValid)
+        {
+            foreach (var e in result)
+            {
+
+                message += e.ErrorMessage.ToString();
+                message += '\n';
+            }
+            return;
+        }
+
+        // format screen birth date into database field
+
+        DateParm dateParm = new DateParm();
+        dateParm.Input = customer.ScreenBirthDate;
+        dateParm.Screen = "update";
+        EditDate editDate = new EditDate();
+        editDate.EditTheDate(dateParm);
+        if (!dateParm.Valid)
+        {
+            message = "Invalid Birth Date.";
+            StateHasChanged();
+            return;
+        }
+        else
+        {
+            // joes in json customer to update screen via temp data to
+            // to reduce 1 db call; signin does the same thing. so update
+            // does not make a db call.
+            customer.CustBirthDate = dateParm.Formatted;
+        }
+
+
+        HttpResponseMessage m = await UpdateCustomer(customer);
+
+        if (m == null)
+        {
+            message = "Server is down. Contact adminstrators.";
+            return;
+        }
+
+        var goodResult = m.IsSuccessStatusCode;
+
+        if (goodResult == false)
+        {
+            message = "could not complete signin unexpected result.";
+            message += "status code:" + m.StatusCode.ToString() + " was returned. ";
+
+            var status = m.StatusCode.ToString();
+            if (status == "NotFound") { message = "Customer not found."; }
+            if (status == "ServerError") { message = "Server error."; }
+
+            return;
+        }
+        else
+        {
+            message = "Successful Update.";
+            StateHasChanged();
+        }
+
+    }
+
+
+    private async Task<HttpResponseMessage> UpdateCustomer(Customer customer)
+    {
+        // /api/UpdateCustomer/
+
+        var send = Env.url;
+
+        string url = send + "/api/UpdateCustomer";
+
+        HttpContent item = JsonContent.Create<Customer>(customer);
+
+        HttpRequestMessage req = new HttpRequestMessage()
+        {
+
+            RequestUri = new Uri(url),
+            Method = new HttpMethod("Put"),
+            Content = item
+        };
+
+
+        HttpResponseMessage m = null;
+
+        try
+        {
+            m = await http.SendAsync(req);
+
+        }
+        catch (System.Exception ex)
+        {
+            Console.WriteLine("Exception on call: " + ex.Message.ToString());
+        }
+
+        return m;
+
+    }
+
+    private class Customer
+    {
+        public int Id { get; set; }
+
+        public string CustId { get; set; }
+
+        [Required,
+         RegularExpression("^[a-zA-Z0-9\\s]*$", ErrorMessage = " password must only contains letters or numbers - required.")]
+        public string CustPassword { get; set; }
+
+        [System.ComponentModel.DataAnnotations.Schema.NotMapped]
+        public string ConfirmPassword { get; set; }
+
+        public string Encrypted { get; set; }
+
+        [Required,
+         RegularExpression("^[a-zA-Z0-9.\\s]*$", ErrorMessage = " First Name must only contains letters or numbers and is required.")]
+        public string CustFirst { get; set; }
+
+        [RegularExpression("^[a-zA-Z0-9.\\s]*$", ErrorMessage = " Middle Name must only contains letters or numbers and is required.")]
+
+        public string CustMiddle { get; set; }
+
+        [Required,
+         RegularExpression("^[a-zA-Z.\\s]*$", ErrorMessage = "Last Name must contains letters and is required")]
+        public string CustLast { get; set; }
+
+        [Required,
+            RegularExpression("^([a-z0-9A-Z])(@)([a-z0-9A-Z])(\\.)([a-z0-9A-Z])$", ErrorMessage = "Invalid Email")]
+
+        public string CustEmail { get; set; }
+        // edit date routine edits this field. screen uses screenBirthDate below.
+        // once edited put data here.
+        public DateTime? CustBirthDate { get; set; }
+
+        [Required,
+            RegularExpression("^[mfMF]+$", ErrorMessage = "Gender m f")]
+
+        public string CustGender { get; set; }
+        [Required,
+          Phone]
+        public string CustPhone { get; set; }
+        [Required,
+           RegularExpression("^[a-zA-Z0-9#.\\s]*$", ErrorMessage = " address1 must only contains letters or numbers . # - required.")]
+        public string CustAddr1 { get; set; }
+        [RegularExpression("^\\s|[a-zA-Z0-9#.\\s]*$", ErrorMessage = "address2 must contains letters or numbers . #  if entered")]
+        public string CustAddr2 { get; set; }
+        [Required,
+          RegularExpression("^[a-zA-Z.\\s]*$", ErrorMessage = "City must contains letters and is required")]
+        public string CustCity { get; set; }
+        public string CustState { get; set; }
+        [Required]
+        [RegularExpression("^[0-9]*$", ErrorMessage = "US zip must only contains numbers = required.")]
+
+        public string CustZip { get; set; }
+        public string CustPlan { get; set; }
+        public string PromotionCode { get; set; }
+        public string AppId { get; set; }
+        public string ExtendColors { get; set; }
+        public string ClaimCount { get; set; }
+
+        public string ScreenBirthDate { get; set; }
+    }
+}
+

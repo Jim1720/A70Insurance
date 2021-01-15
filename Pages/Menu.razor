@@ -1,0 +1,95 @@
+﻿@page "/menu"
+
+
+@inject Blazored.SessionStorage.ISyncSessionStorageService sessionStorage
+
+
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+
+
+<style>
+
+    .b1w {
+        margin-left: 60px;
+    }
+
+    a {
+        margin-left: 15px
+    }
+</style>
+
+<div class="container">
+
+
+    <div style='margin-left: 320px'>
+        <div class="row justify-content-left">
+            <font family="arial" font-size="60" style="color:skyblue">
+                <h1 display-1><i> Main Insurance Menu</i></h1>
+            </font>
+        </div>
+    </div>
+
+    <div class="row-md-6">
+
+        <img alt="Second slide" src="/pics/rock.jpg" class="img-fluid" style="margin: 10px">
+
+    </div>
+
+    <br />
+
+    <div class="form-group row justify-content-center">
+        <div>
+            <a href="/update" style="color:white" class="btn btn-outline-primary">Update</a>
+            <a href="/claim" style="color:white" class="btn btn-outline-primary">Claim</a>
+            <a href="/history" style="color:white" class="btn btn-outline-primary">History</a>
+            <a href="/plan" style="color:white" class="btn btn-outline-primary">Plan</a>
+            <a href="/" style="color:white" class="btn btn-outline-primary">Sign Out</a>
+        </div>
+    </div>
+
+    <div class="form-group row justify-content-center">
+        <span style="color:goldenrod">
+            @message
+        </span>
+    </div>
+
+</div>
+
+@code
+{
+
+    public string message;
+
+
+    // main layout event call back
+    [CascadingParameter]
+    protected EventCallback<string> SignChange { get; set; }
+
+
+    protected override void OnInitialized()
+    {
+        // if message sent show it.
+
+        var msg = sessionStorage.GetItem<string>("MenuMessage");
+        if (msg != null && msg != "")
+        {
+            message = msg;
+            sessionStorage.SetItem<string>("MenuMessage", "");
+        }
+
+
+    }
+
+    public async void signout()
+    {
+
+        sessionStorage.SetItem("custId", ""); // signout customer for back door checking'
+
+
+        await SignChange.InvokeAsync("out"); // Reset Links in Main Layout by Event Callback:
+    }
+
+
+
+}
