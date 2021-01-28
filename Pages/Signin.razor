@@ -11,6 +11,8 @@
 
 @using A70Insurance.Models;
 
+@using A70Insurance.Common;
+
 @using Newtonsoft.Json
 
 @using System.Net.Http;
@@ -120,6 +122,8 @@
     {
         try
         {
+            string token = "";
+            HttpResponseMessage m;
 
             var serverDown = "Server is down. Please contact administrators.";
 
@@ -161,10 +165,10 @@
             {
                 var custId = userInfo.custId.ToString().Trim();
                 var send = Env.url;
-                var suffix = "/api/customer/" + custId;
+                var suffix = "/api/Signin70/" + custId;
                 var url = send + suffix;
 
-                HttpResponseMessage m = await FindCustomer(url);
+                m = await FindCustomer(url);
 
                 var goodResult = m.IsSuccessStatusCode;
 
@@ -182,10 +186,21 @@
                 }
 
 
+
                 HttpContent content = m.Content;
                 json = await content.ReadAsStringAsync();
 
                 customer = JsonConvert.DeserializeObject<Customer>(json);
+
+                // user authenticated get token
+
+                token = customer.Encrypted;
+                if (token == "")
+                {
+                    message = "Unexpected issue.";
+                    StateHasChanged();
+                    return;
+                }
 
                 //
                 // format customer birth date so update can display it as screen date
@@ -241,6 +256,7 @@
 
 
 
+            sessionStorage.SetItem("A65TOKEN", token);
             sessionStorage.SetItem("custId", customer.CustId.ToString()); // replace
             sessionStorage.SetItem("custFirst", customer.CustFirst.ToString());
             sessionStorage.SetItem("custLast", customer.CustLast.ToString());
@@ -271,6 +287,28 @@
         }
     }
 
+    private string GetToken(HttpResponseMessage m)
+    {
+        // save anti forgery token for future api calls...
+
+
+        string token = "";
+        foreach (var header in m.Headers)
+        {
+            if (header.Key == "Set-Cookie")
+            {
+                token = "";
+                foreach (var s in header.Value)
+                {
+                    token += s;
+                }
+            };
+        };
+
+        return token;
+
+    }
+
     private async Task<HttpResponseMessage> FindCustomer(string url)
     {
 
@@ -280,8 +318,11 @@
 
             RequestUri = new Uri(url),
             Method = new HttpMethod("Get")
-
         };
+
+
+        // cross origion blazor requests will omit Set-Cookine in resonse header otherwise.
+        //req.Properties.Add("Credentials", BrowserRequestCredentials.Include);
 
         // catch server down exception ....
 

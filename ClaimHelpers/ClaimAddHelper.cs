@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System.Net.Http;
 using A70Insurance.Models;
 using System.Net.Http.Json;
+using Blazored.SessionStorage;
 
 namespace A70Insurance.ClaimHelpers
 {
@@ -13,11 +14,13 @@ namespace A70Insurance.ClaimHelpers
     {
         private HttpClient http;
         private string url;
+        private ISyncSessionStorageService sessionStorage;
 
-        public ClaimAddHelper(HttpClient Http, string url)
+        public ClaimAddHelper(HttpClient Http, string url, ISyncSessionStorageService ss )
         {
             this.http = Http;
             this.url = url;
+            this.sessionStorage = ss;
         }
 
         public async Task<(bool OK, string Message)> AddClaim(Claim claim)
@@ -65,7 +68,10 @@ namespace A70Insurance.ClaimHelpers
                 RequestUri = new Uri(url),
                 Method = new HttpMethod("Post"),
                 Content = item
-            };
+            }; 
+
+            var token = sessionStorage.GetItem<string>("A65TOKEN");
+            req.Headers.Add("A65TOKEN", token);
 
             HttpResponseMessage m = null;
 

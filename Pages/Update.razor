@@ -364,6 +364,8 @@
             Content = item
         };
 
+        var token = sessionStorage.GetItem<string>("A65TOKEN");
+        req.Headers.Add("a65token", token);
 
         HttpResponseMessage m = null;
 

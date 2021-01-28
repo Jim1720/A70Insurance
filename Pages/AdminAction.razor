@@ -166,6 +166,11 @@
             Method = new HttpMethod("Put"),
             Content = item
         };
+
+
+        var token = sessionStorage.GetItem<string>("A65TOKEN");
+        req.Headers.Add("A65TOKEN", token);
+
         try
         {
             HttpResponseMessage m = await http.SendAsync(req);
@@ -240,6 +245,11 @@
             Method = new HttpMethod("Put"),
             Content = item
         };
+
+
+        var token = sessionStorage.GetItem<string>("A65TOKEN");
+        req.Headers.Add("A65TOKEN", token);
+
         try
         {
             HttpResponseMessage m = await http.SendAsync(req);

@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 using A70Insurance.Models; 
 using System.Net.Http;
 using Newtonsoft.Json;
-using System.Net.Http.Json;
+using System.Net.Http.Json; 
+using Blazored.SessionStorage;
 
 namespace A70Insurance.ClaimHelpers
 {
@@ -14,11 +15,13 @@ namespace A70Insurance.ClaimHelpers
     {
         private HttpClient http;
         private string url;
+        private ISyncSessionStorageService sessionStorage;
 
-        public PayClaimHelper(HttpClient Http, string url)
+        public PayClaimHelper(HttpClient Http, string url, ISyncSessionStorageService ss)
         {
             this.http = Http;
             this.url = url;
+            this.sessionStorage = ss;
         }
 
 
@@ -68,7 +71,11 @@ namespace A70Insurance.ClaimHelpers
                 Content = item
 
             };
- 
+
+
+            var token = sessionStorage.GetItem<string>("A65TOKEN");
+            req.Headers.Add("A65TOKEN", token);
+
             // catch server down exception ....
 
             HttpResponseMessage m = null;

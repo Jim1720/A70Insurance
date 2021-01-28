@@ -11,6 +11,8 @@
 
 @using A70Insurance.Models
 
+@using A70Insurance.Common;
+
 @using Newtonsoft.Json
 
 <style>
@@ -359,8 +361,21 @@
                 return;
             }
 
+
+
+            HttpContent content = m.Content;
+            var token = await content.ReadAsStringAsync(); 
+            if (token == null)
+            {
+                message = "Unexpected issue.";
+                StateHasChanged();
+                return;
+            }
+
             // pass customer as json to update
             var json = JsonConvert.SerializeObject(customer);
+
+            sessionStorage.SetItem("A65TOKEN", token);
 
             // internal nav menu buffer for name at top right.
             sessionStorage.SetItem("custId", customer.CustId.ToString()); // replace
@@ -459,7 +474,7 @@
 
         customer.CustPlan = "";
 
-        string url = Env.url + "/api/Customer";
+        string url = Env.url + "/api/PostCustomer70";
 
         HttpContent item = JsonContent.Create<Customer>(customer);
 
@@ -470,7 +485,6 @@
             Method = new HttpMethod("Post"),
             Content = item
         };
-
 
 
         HttpResponseMessage m = null;

@@ -103,7 +103,7 @@
         {
             navigationManager.NavigateTo("/"); // backdoor logic 
         }
- 
+
 
 
 
@@ -133,7 +133,7 @@
 
 
         HttpContent content = m.Content;
-        var input = await content.ReadAsStringAsync(); 
+        var input = await content.ReadAsStringAsync();
 
         PlanList = JsonConvert.DeserializeObject<List<PlanEntry>>(input);
 
@@ -231,6 +231,8 @@
             Content = item
         };
 
+        var token = sessionStorage.GetItem<string>("A65TOKEN"); 
+        req.Headers.Add("A65TOKEN", token); 
 
         HttpResponseMessage m = null;
 

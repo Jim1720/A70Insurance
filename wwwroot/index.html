@@ -33,7 +33,20 @@
             window.location = goto;
 
 
-            //window.location = "https://www.javatpoint.com/";  
+            //window.location = "https://www.javatpoint.com/";
+        }
+    </script>
+
+    <script>
+        window.initializeCarousel = () => {
+            $('#carouselExampleIndicators').carousel({ interval: 2000 });
+
+            //see step 2 to understand these news id's:
+            $('#carouselExampleCaptions-prev').click(
+                () => $('#carouselExampleCaptions').carousel('prev'));
+            $('#carouselExampleCaptions-next').click(
+                () => $('#carouselExampleCaptions').carousel('next'));
+
         }
     </script>
 </body>
