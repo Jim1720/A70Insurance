@@ -539,7 +539,7 @@
             return; // user  canclled payment.
         }
 
-        PayClaimHelper payClaimHelper = new PayClaimHelper(Http, Env.url);
+        PayClaimHelper payClaimHelper = new PayClaimHelper(Http, Env.url, sessionStorage);
 
         await payClaimHelper.PayClaim(PayClaimId, amount);
 

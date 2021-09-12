@@ -7,48 +7,86 @@
     <title>A70Insurance</title>
     <base href="/" />
     <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
-    <link href="css/app.css" rel="stylesheet" />
-</head>
+    <link href="css/app.css" rel="stylesheet" /> 
+
+  </head>
+
+
 
 <body>
     <app>Loading...</app>
+     
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script src="_framework/blazor.webassembly.js"></script>
 
     <div id="blazor-error-ui">
         An unhandled error has occurred.
         <a href="" class="reload">Reload</a>
         <a class="dismiss">🗙</a>
     </div>
-    <script src="_framework/blazor.webassembly.js"></script>
 
     <script>
-        var ua = window.navigator.userAgent;
-        var isIE = /MSIE|Trident/.test(ua);
 
-        if (isIE) {
-            //alert("Internet Explorer browser is not supported. Please use a more modern browser like Google Chrome, Microsoft Edge, Mozilla Firefox, Opera, Safari, etc.");
+        try {
 
-            var part1 = window.location.href;
-            var part2 = "/notSupported.htm";
-            var goto = part1 + part2;
-            window.location = goto;
+            var ua = window.navigator.userAgent;
+            var isIE = /MSIE|Trident/.test(ua);
 
+            if (isIE) {
 
-            //window.location = "https://www.javatpoint.com/";
+                //alert("Internet Explorer browser is not supported. Please use a more modern browser like Google Chrome, Microsoft Edge, Mozilla Firefox, Opera, Safari, etc.");
+
+                var part1 = window.location.href;
+                var part2 = "/notSupported.htm";
+                var goto = part1 + part2;
+                window.location = goto;
+
+            }
         }
+        catch (Error) {
+
+            console.log("index.htm - caught error (1): ");
+            console.log(Error);
+
+        };
+
     </script>
 
     <script>
-        window.initializeCarousel = () => {
-            $('#carouselExampleIndicators').carousel({ interval: 2000 });
 
-            //see step 2 to understand these news id's:
-            $('#carouselExampleCaptions-prev').click(
-                () => $('#carouselExampleCaptions').carousel('prev'));
-            $('#carouselExampleCaptions-next').click(
-                () => $('#carouselExampleCaptions').carousel('next'));
 
-        }
-    </script>
-</body>
 
-</html>
+        window.initializeCarousel = (cap, prev, next) => {
+
+            /* must be positioned in body after the src=_framework etc above to be sure page loads */
+            try {
+                 
+
+                window.initializeCarousel = () => {
+                    $('#carouselExampleIndicators').carousel({ interval: 10000 });
+
+                    //see step 2 to understand these news id's:
+                    $('#carouselExampleIndicators-prev').click(
+                        () => $('#carouselExampleIndicators').carousel('prev'));
+                    $('#carouselExampleIndicators-next').click(
+                        () => $('#carouselExampleIndicators').carousel('next'));
+
+                }
+
+
+            } catch (Error) {
+
+                console.log("index.htm = initializeCarousel =  - caught error: ");
+                console.log(Error);
+
+            };
+
+
+        };
+
+        </script>
+
+
+</body >
+
+</html >

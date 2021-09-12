@@ -182,3 +182,34 @@ app {
         display: block;
     }
 }
+
+
+
+/* style effect classes */
+
+.bg-image {
+    padding: 10px 40px 10px 40px;
+    margin-left: var(--margin-left);
+    background-image: url('/pics/road.jpg');
+    background-size: 100% 100%
+}
+
+/* these two classes use css variable */
+
+.bg-outline {
+    padding: 10px 40px 10px 40px;
+    border-style: solid;
+    border-width: 1px; 
+}
+
+.bg-solid {
+    padding: 10px 40px 10px 40px; 
+}
+
+.style {
+
+    padding: 10px 40px 10px 40px;
+    background-color: black;
+
+}
+ 

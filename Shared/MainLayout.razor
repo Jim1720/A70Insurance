@@ -1,26 +1,52 @@
 ﻿@inherits LayoutComponentBase
 
 @inject Blazored.SessionStorage.ISyncSessionStorageService sessionStorage
-  
 
-<!-- -div class="sidebar">
-    <NavMenu />
-</!-div-->
+@using A70Insurance.StyleFeature
+
+@inject IScreenStyleManager screenStyleManager;
+@inject IScreenStyleFactory screenStyleFactory;
+@inject IScreenStyleList    screenStyleList;
+
+@implements IDisposable;
+@inject NavigationManager navigationManager;
+
+@using A70Insurance.Pages;
 
 <style>
     a {
         color: white;
         font-size: larger;
     }
-    .out { color: lightgray}
-    .in  { color: gold}
 
+    a:hover {
+
+        color: burlywood;
+        font-size: larger;
+    }
+
+    .out {
+        color: lightgray
+    }
+
+    .in {
+        color: gold
+    }
+
+    .b4 {
+        background-color: black;
+        color: white;
+        font-size: larger;
+        border: none
+    }
 </style>
 
 <div class="main">
     <div class="top-row px-4" style="background-color:black">
 
-        <a href="" class="ml-md-auto" style="color:aqua">A70Insurance</a>
+        <a href="" class="ml-md-auto" style="color:burlywood">A70Insurance</a>
+
+
 
         @if (signedIn == false)
         {
@@ -35,9 +61,7 @@
 
             <a href="/about" class="ml-md-auto">About</a>
 
-            <a href="/admin" class="ml-md-auto">Admin</a>
-
-        }
+            <a href="/admin" class="ml-md-auto">Admin</a>}
 
         @if (signedIn == true)
         {
@@ -45,30 +69,45 @@
 
             <a href="/menu" class="ml-md-auto">Menu</a>
 
+            <a href="/update" class="ml-md-auto">Update</a>
+
             <a href="/claim" class="ml-md-auto">Claim</a>
 
             <a href="/history" class="ml-md-auto">History</a>
 
-            <a href="/" @onclick="signout" class="ml-md-auto">Sign Out</a>
+            @if (showStyleLink)
+            {
+                <button @onclick="NextStyle" class="b4 ml-md-auto">@internalClass</button>
+            }
 
+            @if (showColorLink)
+            {
+                <button @onclick="NextColor" style="@colorLinkStyle" class="b4 ml-md-auto">@colorLinkColor</button>
+            }
 
+            <a href="#" @onclick="signoutCustomer" class="ml-md-auto">Sign Out</a>}
 
-        }
-
-        <a href="/" class="@at ml-md-auto">@info</a>
+        <a href="/" class="@at ml-md-auto"  style="color:burlywood">@info</a>
 
     </div>
 
     <div class="content px-4">
 
+
         <CascadingValue Value=SignChange>
-            @Body
-        </CascadingValue>
+ 
+
+                    @Body
+             
+
+         </CascadingValue>
 
     </div>
+
+
 </div>
 
-@code { 
+@code {
 
     public string info = "Signed Out";
     public string at = "out";
@@ -77,15 +116,107 @@
     private string custFirst = "";
     private string custLast = "";
     private string custId = "";
+    private bool showStyleLink = false;
+    private bool showColorLink = false;
+    private String colorLinkStyle = "color:white";
+    private String colorLinkColor = "white";
+    private String externalClass = "Style";
+    private String internalClass = "Style";
+    private String currentScreen = "";
+    private String fullScreenPath = "";
+    private String slash = "/";  
+    public String callback = "";
 
 
-    EventCallback<string> SignChange => EventCallback.Factory.Create<string>(this, Change);
+    EventCallback<string> SignChange => EventCallback.Factory.Create<string>(this, SignedInChange);
 
+    EventCallback<string> StyleChange => EventCallback.Factory.Create<string>(this, NextStyle);
 
-    public  void Change(string action)
+    EventCallback<string> ColorChange => EventCallback.Factory.Create<string>(this, NextColor);
+     
+
+    protected override void OnInitialized()
     {
 
-        bool signin = (action ==  "in") ? true : false;
+        // subscribe to location changed event.
+
+        navigationManager.LocationChanged += HasLocationChanged;
+
+    }
+
+
+
+    public void ScreenRefreshAssignment(Object o)
+    {
+        // when update or claim component starts
+        // the localrefresh screen function is passed here
+        // to be used when style or color changes.
+
+        StateHasChanged();
+
+    }
+
+
+    private void HasLocationChanged(Object sender, LocationChangedEventArgs e)
+    { 
+
+        var location = e.Location;
+
+        this.fullScreenPath = location;
+
+        var result = GetTheScreen(location);
+        if (result == "invalid")
+        {
+            navigationManager.NavigateTo(slash);
+        }
+        this.currentScreen = result;
+
+        // did we move - only come here once.
+
+        var lastLocation = this.sessionStorage.GetItem<String>("LastLocation") as String;
+        var newLocation = lastLocation == null || this.currentScreen != lastLocation;
+
+        if (newLocation)
+        {
+
+            // remember location
+            this.sessionStorage.SetItem<String>("LastLocation", this.currentScreen);
+
+            UpdateStyleAndColor();
+
+            StateHasChanged();
+
+        } 
+
+    }
+
+    protected String GetTheScreen(String location)
+    {
+        var value = "";
+        var indexOfLastSlash = location.LastIndexOf(slash);
+        var notfound = -1;
+        var withinbounds = location.Length - 01;
+        if (indexOfLastSlash > notfound && indexOfLastSlash < withinbounds)
+        {
+            value = location.Substring(indexOfLastSlash + 01);
+        }
+        if (value == "")
+        {
+            return "invalid";
+        }
+        return value;
+    }
+
+    void IDisposable.Dispose()
+    {
+        // unsubscribe
+        navigationManager.LocationChanged -= HasLocationChanged;
+    } 
+
+    public void SignedInChange(string action)
+    {
+
+        bool signin = (action == "in") ? true : false;
 
         signedIn = signin;
 
@@ -112,13 +243,102 @@
 
         StateHasChanged();
 
+
+
     }
 
-    private void signout()
+     
+
+
+    public void NextStyle()
+    {
+        
+
+        // get next style for screen
+        screenStyleFactory.getNextStyle(ifscreenName: this.currentScreen);
+
+        // update navigation links
+        UpdateStyleAndColor();
+
+        // persist the style list
+        // todo: be peristent here !!
+        sessionStorage.SetItem("screenStyleList", screenStyleList.getScreenStyleList());
+
+
+        StateHasChanged();
+    }
+
+
+    public void NextColor()
+    {
+        
+
+        // get next style for screen
+        screenStyleFactory.getNextColor(ifscreenName: this.currentScreen);
+
+
+        // update navigation links
+        UpdateStyleAndColor();
+
+        // persist the style list
+        // todo: be peristent here !!
+        sessionStorage.SetItem("screenStyleList", screenStyleList.getScreenStyleList());
+
+
+        StateHasChanged();
+    }
+
+
+    private void UpdateStyleAndColor()
+    {
+
+
+        // determin if style and color links should be showwn.
+
+        colorLinkColor = "n/a";
+        showStyleLink = false;
+        showColorLink = false;
+
+        var usesStyles = screenStyleManager.AreStylesActive(this.currentScreen);
+        if (usesStyles)
+        {
+            showStyleLink = true;
+
+            // now, are colors being used as current style if yes show color link and color the link.
+
+            // * important: each screen using the style feature is required
+            // * to reload the style list from tempdata
+            // * that happens before this code is exectuted so the screenstyle list
+            // * will be ready to search.
+
+            ScreenStyleObject screenStyleObject = screenStyleFactory.getCurrentStyleForScreen(ifscreenName: currentScreen);
+            if (screenStyleObject != null)
+            {
+                internalClass = screenStyleObject.internalClass;
+                externalClass = screenStyleObject.externalClass;
+                //
+                showColorLink = (internalClass == "Outline" || internalClass == "Solid");
+                if (showStyleLink)
+                {
+
+                    colorLinkColor = screenStyleObject.userColor;
+                    colorLinkStyle = "margin-left: 60px;";
+                    colorLinkStyle += $"color:" + screenStyleObject.userColor + ";";
+                }
+            }
+            else
+            {
+                showColorLink = false;
+            }
+        }
+    }
+
+
+    private void signoutCustomer()
     {
 
         sessionStorage.SetItem("custId", ""); // signout customer for back door checking
-        Change("out");
+        SignedInChange("out");
     }
 
 

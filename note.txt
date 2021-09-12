@@ -1,5 +1,0 @@
-
- 1. index, notsupported.htm -- check for ie and display not supported page.
- 2. claim helpers: Add, Pay, Stamp - use token to process action.
- 3. AdminAction,Plan,Update,Signin,Register - pages use token to process actions.
- 4. common: token utility.

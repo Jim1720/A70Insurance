@@ -10,274 +10,424 @@
 @inject NavigationManager navigationManager
 
 @inject Blazored.SessionStorage.ISyncSessionStorageService sessionStorage
- 
+
+
+@inject IScreenStyleFactory screenStyleFactory;
+
+
+@inject IEditDate editDate;
 
 @using A70Insurance.Models
 @using A70Insurance.ClaimHelpers;
+@using A70Insurance.StyleFeature
 
 @using System.Text.RegularExpressions;
 
 
 @using Newtonsoft.Json
 
-<div class="continer">
-
-    <!-- left of the main form 4 buttons exist for claim type -->
-    <!-- pink blue orange green -->
-
-    <div class="row">
-        <!-- this row contains buttons and form -->
-        <!-- buttons first column of row -->
-
-        <div class="col-2" style="margin-top: 220px; ">
-
-            <!-- first column of row: buttons -->
-            <!-- dt('m') displays medical fields : d,v,x for other types -->
-            <!-- click methods on deselected type buttons will change the type to that selection -->
-
-            <div id="typebuttons" name="typebuttons" class="list-group">
-
-             
-                @if (screenType == medical)
-                {
-                    <button id="medButton" type="button" class="btn btn-danger">Medical</button>
-                }
-                else
-                {
-                    <button @onclick="dtMedical" id="medButton2" type="button" class="btn btn-outline-danger">Medical</button>
-                }
-
-                @if (screenType == dental)
-                {
-                    <button id="denButton" type="button" class="btn  btn-primary">Dental</button>
-                }
-                else
-                {
-                    <button @onclick="dtDental" id="denButton2" type="button" class="btn  btn-outline-primary">Dental</button>
-                }
 
 
-                @if (screenType == vision)
-                {
-                    <button id="visButton" type="button" class="btn btn-warning">Vision</button>
-                }
-                else
-                {
-                    <button @onclick="dtVision" id="visButton2" type="button" class="btn  btn-outline-warning">Vision</button>
-                }
+<style>
 
-                @if (screenType == drug)
-                {
-                    <button id="drgButton" type="button" class="btn  btn-success">Drug</button>
-                }
-                else
-                {
+    .b1:hover {
+        color: goldenrod;
+        background-color: black
+    }
 
-                    <button @onclick="dtDrug" id="drgButton2" type="button" class="btn  btn-outline-success">Drug</button>
-                }
+    .b1 {
+        color: white;
+        background-color: blue;
+        margin: 12px;
+        font-size: larger;
+        padding: 10px;
+    }
 
-            </div> <!-- end of type buttons -->
-        </div> <!--  end type button column -->
+    .lab {
+        color: dodgerblue;
+        font-size: large;
+    }
 
-        <div class="col">
-
-             
-            <div class="row">
-                <h4 align="center" style="margin:25px; color: dodgerblue">Submit Claim</h4>
-            </div>
-
-            <div class="row"></div>
-            <div class="row">
-
-                <div class="col">
-
-
-                    <label style="color:dodgerblue;" asp-for="PatientFirst" class="st1 control-label">First Name:</label>
-                    <input @bind="@claim.PatientFirst" class="form-control" placeholder="First Name" type="text" />
-
-                    <label style="color:dodgerblue;" asp-for="PatientLast" class="st1 control-label">Last Name:</label>
-                    <input @bind="@claim.PatientLast" class="form-control" placeholder="Last Name" type="text" />
-
-
-                    <br /><label style="color:dodgerblue;" class="st1 control-label">Diagnosis Codes:</label>
-
-
-                    <select @bind="@claim.Diagnosis1" class="form-control">
-
-                        @for (var i = 0; i < diagnoses.Count; i++)
-                        {
-                            <option>@diagnoses[i]</option>
-                        }
-                    </select> 
-
-                    <select @bind="@claim.Diagnosis2" class="form-control">
-
-                        @for (var i = 0; i < diagnoses.Count; i++)
-                        {
-                            <option>@diagnoses[i]</option>
-                        }
-                    </select>
-
-                    <br /><label style="color:dodgerblue" class="st1 control-label">Procedure Codes:</label>
-                    <select class="form-control" @bind="@claim.Procedure1">
-
-                        @for (var i = 0; i < procedures.Count; i++)
-                        {
-                            <option>@procedures[i]</option>
-                        }
-
-                    </select>
-                    <select class="form-control" @bind="@claim.Procedure2">
-
-                        @for (var i = 0; i < procedures.Count; i++)
-                        {
-                            <option>@procedures[i]</option>
-                        }
-                    </select>
+    h2 {
+        color: white;
+        margin-left: 240px;
+    }
 
 
 
-                    <br />
+    .st1 {
+        font-family: Arial;
+        font-size: larger
+    }
 
-                </div>
-                <!--
-        https://forums.asp.net/t/2165118.aspx?Select+Dropdownlist+in+Blazor
-        -->
+    .d1 {
+        margin-right: 35px;
+    }
 
-                <div class="col">
+    /* sl  - style label class */
 
-                    <label style="color:dodgerblue;margin-bottom: 10px" class="st1 control-label">Physician:</label>
-                    <select class="form-control" @bind="@claim.Physician">
-                        @for (var i = 0; i < doctors.Count; i++)
-                        {
-                            <option>@doctors[i]</option>
-                        }
-                    </select>
+    .sl {
 
-                    <label style="color:dodgerblue;margin-bottom:10px" class="st1 control-label">Clinics:</label>
-                    <select class="form-control" @bind="@claim.Clinic">
-                        @for (var i = 0; i < clinics.Count; i++)
-                        {
-                            <option>@clinics[i]</option>
-                        }
-                    </select>
+        color: @labelColor;
+    }
 
-                    <br />
-                    <label style="color:dodgerblue;margin-bottom:10px" class="st1 control-label">Date of Service:</label>
-                    <input class="form-control" @bind="claim.ScreenDateService" placeholder="mm/dd/yyyy" />
+    /* sm - style message class */
 
-                    <br />
-                    <label style="color:dodgerblue;margin-bottom:10px" class="st1 control-label">Location:</label>
-                    <select class="form-control" @bind="@claim.Location">
-                        @for (var i = 0; i < locations.Count; i++)
-                        {
-                            <option>@locations[i]</option>
-                        }
-                    </select>
+     .sm {
 
+        color: @messageColor;
+    }
 
+      /* sh - style header class */
 
-                    <br /> <!-- Service drop down -->
+     .sh {
 
+        color: @headerColor;
+    }
 
-                    <label style="color:@claimTypeColor" class="st1 control-label">@claimTypeLiteral</label><br />
- 
-                    <select @bind="claim.Service" class="form-control">
- 
+    .e1 {
+        margin-right: 4px;
+    }
 
-                        @foreach(var name in ServiceTypeList)
-                        { 
+</style>
 
-                            if(name == claim.Service)
-                            {
-                                 <option selected value=@name>@name</option> 
-                            }
-                            else
-                            {
-                                 <option value=@name>@name</option>  
-                            }
+<div class="container">
 
-                        }
+    <div id="ApplyColorsHere" class="@externalClass" style="@styleHelper">
 
-                    </select>
+        <!-- left of the main form 4 buttons exist for claim type -->
+        <!-- pink blue orange green -->
 
-                </div>
+        <div class="row" style="margin-left:100px;">
+            <!-- this row contains buttons and form -->
+            <!-- buttons first column of row -->
 
-                <div class="col">
+            <div class="col-2" style="margin-top: 220px; ">
 
-                    <label style="color:dodgerblue" class="st1 control-label">Referring:</label><br />
-                    <input class="form-control" @bind="@claim.Referral" placeholder="Referral" type="text" />
+                <!-- first column of row: buttons -->
+                <!-- dt('m') displays medical fields : d,v,x for other types -->
+                <!-- click methods on deselected type buttons will change the type to that selection -->
 
-                    <label style="color:dodgerblue" class="st1 control-label">Payment Method:</label><br />
+                <div id="typebuttons" name="typebuttons" class="list-group">
 
-                    <select class="form-control" @bind="@claim.PaymentAction">
-                        @for (var i = 0; i < methods.Count; i++)
-                        {
-                            <option>@methods[i]</option>
-                        }
-                    </select>
-
-                    <br />
-                    <label style="color:dodgerblue" class="st1 control-label">Notes:</label><br />
-                    <input class="form-control" @bind="@claim.ClaimDescription" placeholder="Description" type="text" />
-
-                    <br />
 
                     @if (screenType == medical)
                     {
-
-                        <label id="c1" style="color:red;"  class="st1 control-label">Confine Date:</label>
-                        <input id="c2" @bind="@claim.ScreenDateConfine" class="form-control" placeholder="Confine" type="text" />
-
-                        <label id="r1" style="color:red;"  class=" st1 control-label">Release Date:</label>
-                        <input id="r2" @bind="@claim.ScreenDateRelease" class="form-control" placeholder="Release" type="text" />
+                        <button id="medButton" type="button" class="btn btn-danger">Medical</button> }
+                    else
+                    {
+                        <button @onclick="dtMedical" id="medButton2" type="button" class="btn btn-outline-danger">Medical</button>
                     }
 
                     @if (screenType == dental)
                     {
-
-                        <label id="t1" style="color:dodgerblue;" class="st1 control-label">Tooth Numnber:</label>
-                        <input id="t2" @bind="@claim.ToothNumber" class="form-control" placeholder="Tooth" type="text" />
+                        <button id="denButton" type="button" class="btn  btn-primary">Dental</button>
                     }
+                    else
+                    {
+                        <button @onclick="dtDental" id="denButton2" type="button" class="btn  btn-outline-primary">Dental</button>
+                    }
+
 
                     @if (screenType == vision)
                     {
-
-                        <label id="e1" style="color:yellow;" class="st1 control-label">Eyeware:</label>
-                        <input id="e2" @bind="@claim.Eyeware" class="form-control" placeholder="Eyeware" type="text" />
+                        <button id="visButton" type="button" class="btn btn-warning">Vision</button>
+                    }
+                    else
+                    {
+                        <button @onclick="dtVision" id="visButton2" type="button" class="btn  btn-outline-warning">Vision</button>
                     }
 
                     @if (screenType == drug)
                     {
+                        <button id="drgButton" type="button" class="btn  btn-success">Drug</button>
+                    }
+                    else
+                    {
 
-                        <label id="a1" style="color:limegreen;"  class="st1 control-label">Drug Name:</label>
-                        <input id="a2" @bind="@claim.DrugName" class="form-control" placeholder="Drug" type="text" />
+                        <button @onclick="dtDrug" id="drgButton2" type="button" class="btn  btn-outline-success">Drug</button>
+                    }
+
+                </div> <!-- end of type buttons -->
+
+                <!-- put hidden field here so errors at bottom do not extend downard.-->
+                <!-- claim type gets stored here by java script  -->
+                <input style="visibility:hidden" id="hiddenType" type="text" asp-for="@claim.ClaimType" />
+
+
+            </div> <!--  end type button column -->
+
+
+
+            <div class="col" style="margin-left: 25px;">
+
+                <div class="row">
+
+
+                    @if (externalClass == "Style")
+                    {
+
+                        <h4 align="center" style="color:burlywood;margin-left: 200px;">Submit Claim</h4>
+                    }
+                    else
+                    {
+
+                        <h4 align="center" style="margin-left: 200px; @headerStyle">Submit Claim</h4>
                     }
 
                 </div>
 
-            </div> 
+                <div class="form-group row">
 
-            <div class="row" style="margin: 25px;">
-                <br />
-                <button @onclick="FileClaim" style="margin:5px;" type="submit" class="btn btn-primary">Submit Claim</button>
-                <button @onclick="menu" style="margin:5px;" type="button" href="/menu" class=" btn btn-primary">Menu</button>
-                
-                <div style="color:lawngreen"> @message </div>
-            </div> 
+                    <div class="e1 col-xs-5">
 
-            <!-- claim type gets stored here by java script  -->
-            <input style="visibility:hidden" id="hiddenType" type="text" asp-for="@claim.ClaimType" />
+                        <label asp-for="PatientFirst" class="sl st1 control-label">First Name:</label>
+                        <input @bind="@claim.PatientFirst" class="form-control" placeholder="First Name" type="text" />
+                    </div>
 
-        </div>
+                    <div class="e1 col-xs-5">
+
+                        <label asp-for="PatientLast" class="sl st1 control-label">Last Name:</label>
+                        <input @bind="@claim.PatientLast" class="form-control" placeholder="Last Name" type="text" />
+
+                    </div>
+
+                    <div class="e1 col-xs-5">
+                        <label class="sl st1 control-label">Notes:</label><br />
+                        <input class="form-control" @bind="@claim.ClaimDescription" placeholder="Description" type="text" />
+                    </div>
+                </div>
+
+                <div class="form-group row">
+
+                    <div class="e1 col-xs-5">
+
+                        <br /><label class="sl st1 control-label">Diagnosis Codes :</label>
+
+                        <select @bind="@claim.Diagnosis1" class="form-control">
+
+                            @for (var i = 0; i < diagnoses.Count; i++)
+                            {
+                                <option>@diagnoses[i]</option>
+                            }
+                        </select>
+
+                        <select @bind="@claim.Diagnosis2" class="form-control">
+
+                            @for (var i = 0; i < diagnoses.Count; i++)
+                            {
+                                <option>@diagnoses[i]</option>
+
+                            }
+                        </select>
+
+                    </div>
+
+                    <div class="e1 col-xs-5">
+
+                        <br /><label class="sl st1 control-label">Procedure Codes :</label>
+                        <select class="form-control" @bind="@claim.Procedure1">
+
+                            @for (var i = 0; i < procedures.Count; i++)
+                            {
+                                <option>@procedures[i]</option>
+                            }
+
+                        </select>
+                        <select class="form-control" @bind="@claim.Procedure2">
+
+                            @for (var i = 0; i < procedures.Count; i++)
+                            {
+                                <option>@procedures[i]</option>
+                            }
+                        </select>
+
+                    </div>
+
+                    <!-- Service drop down -->
+                    <div class="e1ccol-xs-5">
+                        <br />
+                        <label style="color:@claimTypeColor" class="sl st1 control-label">@claimTypeLiteral</label><br />
+
+                        <select @bind="claim.Service" class="form-control">
 
 
-    </div> <!-- end of row -->
+                            @foreach (var name in ServiceTypeList)
+                            {
 
-</div> /* end of container */
+                                if (name == claim.Service)
+                                {
+                                    <option selected value=@name>@name</option>
+                                }
+                                else
+                                {
+                                    <option value=@name>@name</option>
+                                }
+
+                            }
+
+                        </select>
+                    </div>
+
+                </div>
+                <!--
+    https://forums.asp.net/t/2165118.aspx?Select+Dropdownlist+in+Blazor
+    -->
+
+                <div class="form-group row">
+
+                    <div class="e1 col-xs-5">
+
+                        <label style="margin-bottom: 10px" class="sl st1 control-label">Physician:</label>
+                        <select class="form-control" @bind="@claim.Physician">
+                            @for (var i = 0; i < doctors.Count; i++)
+                            {
+                                <option>@doctors[i]</option>
+                            }
+                        </select>
+
+                    </div>
+                    <div class="e1 col-xs-5">
+
+                        <label style="margin-bottom:10px" class="sl st1 control-label">Clinic:</label>
+                        <select class="form-control" @bind="@claim.Clinic">
+                            @for (var i = 0; i < clinics.Count; i++)
+                            {
+                                <option>@clinics[i]</option>
+                            }
+                        </select>
+
+                    </div>
+                    <div class="e1 col-xs-5">
+
+                        <div class="col-xs-5">
+                            <label style="margin-bottom:10px" class="sl st1 control-label">Service Date:</label>
+                            <input class="form-control" @bind="claim.ScreenDateService" placeholder="mm/dd/yyyy" />
+                        </div>
+
+                    </div>
+                    <div class="e1 col-xs-5">
+
+                        <div class="col-xs-8">
+                            <label style="margin-bottom:10px" class="sl st1 control-label">Location:</label>
+                            <select class="form-control" @bind="@claim.Location">
+                                @for (var i = 0; i < locations.Count; i++)
+                                {
+                                    <option>@locations[i]</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+
+                </div>
+
+
+
+                <div class="form-group row">
+
+
+                    <div class="e1 col-xs-5">
+
+                        <label class="sl st1 control-label">Referring:</label><br />
+                        <input class="form-control" @bind="@claim.Referral" placeholder="Referral" type="text" />
+                    </div>
+                    <div class="e1 col-xs-5">
+                        <label class="sl st1 control-label">Payment Method:</label><br />
+
+                        <select class="form-control" @bind="@claim.PaymentAction">
+                            @for (var i = 0; i < methods.Count; i++)
+                            {
+                                <option>@methods[i]</option>
+                            }
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <div class="form-group row">
+                    <br />
+
+                    @if (screenType == medical)
+                    {
+                        <div class="e1 col-xs-5">
+                            <label id="c1" style="color:@claimTypeColor;" class="sl st1 control-label">Confine Date:</label>
+                            <input id="c2" @bind="@claim.ScreenDateConfine" class="form-control" placeholder="Confine" type="text" />
+                        </div>
+                        <div class="e1 col-xs-5">
+                            <label id="r1" style="color:@claimTypeColor;" class="st1 control-label">Release Date:</label>
+                            <input id="r2" @bind="@claim.ScreenDateRelease" class="form-control" placeholder="Release" type="text" />
+                        </div>
+                    }
+
+                    @if (screenType == dental)
+                    {
+                        <div class="e1 col-xs-5">
+                            <label id="t1" style="color:@claimTypeColor;" class="sl st1 control-label">Tooth Numnber:</label>
+                            <input id="t2" @bind="@claim.ToothNumber" class="form-control" placeholder="Tooth" type="text" />
+                        </div>
+                    }
+
+                    @if (screenType == vision)
+                    {
+                        <div class="e1 col-xs-5">
+                            <label id="e1" style="color:@claimTypeColor;" class="sl st1 control-label">Eyeware:</label>
+                            <input id="e2" @bind="@claim.Eyeware" class="form-control" placeholder="Eyeware" type="text" />
+                        </div>
+                    }
+
+                    @if (screenType == drug)
+                    {
+                        <div class="e1 col-xs-5">
+                            <label id="a1" style="color:@claimTypeColor;" class="sl st1 control-label">Drug Name:</label>
+                            <input id="a2" @bind="@claim.DrugName" class="form-control" placeholder="Drug" type="text" />
+                        </div>
+                    }
+
+                </div>
+
+
+
+                <div class="row" style="margin:  5px;">
+                    <br />
+                    <button @onclick="FileClaim" style="margin:5px;" type="submit" class="btn btn-primary">Submit Claim</button>
+                    <button @onclick="menu" style="margin:5px;" type="button" href="/menu" class="btn btn-primary">Menu</button>
+                </div>
+
+
+
+                <div class="row" style="margin:  5px;">
+
+                    @if (externalClass == "Style")
+                    {
+                        <div style="color:burlywood"> @message </div>
+                    }
+                    else
+                    {
+                        <div style="@messageStyle"> @message </div>
+                    }
+
+                </div>
+
+                </div>
+
+
+            </div>
+
+
+
+
+        </div> <!-- end of style div. -->
+
+    </div>
+ 
 
 @code {
 
+    // main layout event call back
+    [CascadingParameter]
+    protected EventCallback<string> RefreshScreen { get; set; }
 
     public string message;
 
@@ -291,7 +441,7 @@
 
 
     List<string> diagnoses = new List<string>()
-    {
+{
             "none",
             "1001",
             "1002"
@@ -306,7 +456,7 @@
 
 
     List<string> doctors = new List<string>()
-    {
+{
 
             "Dr. Smith",
             "Dr. Jones"
@@ -338,6 +488,23 @@
 
         };
 
+    String styleHelper = "";
+    String externalClass = "Style";
+    String internalClass = "";
+    String labelColor = "dodgerblue";
+    String userColor = "white";
+    String messageColor = "burleywood";
+    String headerColor = "burleywood";
+    //String labelColorWhenSolid = "white";
+
+
+    String defaultHeaderStyle = "color:goldenrod";
+    String defaultMessageStyle = "color:goldenrod";
+    String defaultLabelStyle = "color:dodgerblue";
+
+    String headerStyle = "color:burleywood";
+    String messageStyle = "color:burleywood";
+    String labelStyle = "color:dodgerblue";
 
 
     Claim claim = new Claim();
@@ -369,7 +536,7 @@
             var custId = sessionStorage.GetItem<string>("custId");
             if (custId == null)
             {
-                navigationManager.NavigateTo("/"); // backdoor logic 
+                navigationManager.NavigateTo("/"); // backdoor logic
             }
 
             await AccessServiceEntryList();
@@ -377,13 +544,13 @@
 
             // end helpers
 
-            // is it adjustment ? 
+            // is it adjustment ?
 
             IsAdjustment = false;
 
             var historyAdjustedId = sessionStorage.GetItem<string>("historyAdjustedId");
 
-            if(historyAdjustedId != null && historyAdjustedId != "")
+            if (historyAdjustedId != null && historyAdjustedId != "")
             {
 
                 // we came from history screen.
@@ -406,6 +573,10 @@
                 SetUpNewClaim();
 
 
+            /* style coding */
+
+            ApplyColorsAndStyles();
+            StateHasChanged();
 
         }
         catch (Microsoft.JSInterop.JSException js)
@@ -419,6 +590,106 @@
 
     }
 
+
+    public override Task SetParametersAsync(ParameterView parameters)
+    {
+
+        // for nextStyle and nextColor to rerender the page.
+        // get class for form.
+
+        /* screen refresh - style or color link clicked */
+
+        ApplyColorsAndStyles();
+        StateHasChanged();
+
+        return base.SetParametersAsync(parameters);
+    }
+
+    protected void ApplyColorsAndStyles()
+    {
+        // call when screen loads and
+        // call when colors or styles are changed
+        // in MainLayout.razor
+
+        var screenStyleObject = screenStyleFactory.getCurrentStyleForScreen(ifscreenName: "claim");
+        if (screenStyleObject != null)
+        {
+            externalClass = screenStyleObject.externalClass;
+            // for color styles: outline and solid the
+            // java script will set the four colors
+            // including: header, label and message colors.
+            userColor = screenStyleObject.userColor;
+            labelColor = screenStyleObject.labelColor;
+            headerColor = screenStyleObject.headerColor;
+            messageColor = screenStyleObject.messageColor;
+            internalClass = screenStyleObject.internalClass;
+
+            headerStyle = defaultHeaderStyle;
+            labelStyle = defaultLabelStyle;
+            messageStyle = defaultMessageStyle;
+
+            // one of these is not used ?
+            if (internalClass == "Outline")
+            {
+                styleHelper = $"border-color:{userColor}";
+                headerStyle = defaultHeaderStyle;
+                labelStyle = defaultLabelStyle;
+                messageStyle = defaultMessageStyle;
+            }
+            if (internalClass == "Solid")
+            {
+                styleHelper = $"background-color:{userColor}";
+                headerStyle = $"color:{headerColor}";
+                labelStyle = $"color:{labelColor}";
+                messageStyle = $"color:{messageColor}";
+            }
+            if (internalClass == "Picture")
+            {
+                styleHelper = $"background-color:white";
+                headerStyle = $"color:white";
+                labelStyle = $"color:white";
+                messageStyle = $"color:white";
+            }
+
+
+            var defaultClaimType = "m";
+            SetTypeLabels(internalClass, defaultClaimType, labelColor);
+        }
+    }
+
+    // use on initialze and when customer clicks claim type button on screen.
+
+    public void SetTypeLabels(String internalClass, String claimType, String labelColor)
+    {
+
+        switch (internalClass)
+        {
+
+            case "Style": SetByType(claimType); break;
+            case "Outline": SetByType(claimType); break;
+            case "Picture": JustSet("white"); break;
+            case "Solid": JustSet(labelColor); break;
+            default: break;
+        }
+
+    }
+
+    public void SetByType(String type)
+    {
+        switch (type)
+        {
+            case "m": claimTypeColor = "red"; break;
+            case "d": claimTypeColor = "dodgerblue"; break;
+            case "v": claimTypeColor = "yellow"; break;
+            case "x": claimTypeColor = "lawngreen"; break;
+            default: break;
+        }
+    }
+
+    public void JustSet(String value)
+    {
+        claimTypeColor = value;
+    }
 
 
     public async Task AccessServiceEntryList()
@@ -505,10 +776,11 @@
         claim.PaymentAction = claim.PaymentAction.Trim();
 
 
-        SelectServicesByType(claim.ClaimType, IsAdjustment,false);
+        SelectServicesByType(claim.ClaimType, IsAdjustment, false);
 
         var newAdjustmentId = DateTime.Now.ToString("CL-MM-dd-yy-H:mm:ss");
-        sessionStorage.SetItem<string>("newAdjustmentId", newAdjustmentId);
+        sessionStorage.SetItem<string>
+        ("newAdjustmentId", newAdjustmentId);
 
         var a = claim.ClaimIdNumber.Trim();
         var b = newAdjustmentId.Trim();
@@ -523,7 +795,7 @@
     public void FormatScreenDates()
     {
 
-        // date of service gets formatted 
+        // date of service gets formatted
 
         claim.ScreenDateService = FormatScreenDate(claim.DateService.ToString());
 
@@ -532,7 +804,7 @@
         {
 
             claim.ScreenDateConfine = FormatScreenDate(claim.DateConfine.ToString()); // where is it;
-            claim.ScreenDateRelease = FormatScreenDate(claim.DateRelease.ToString()); // where is it; 
+            claim.ScreenDateRelease = FormatScreenDate(claim.DateRelease.ToString()); // where is it;
         }
 
     }
@@ -557,9 +829,9 @@
     {
         ServiceTypeList.Clear();
 
-        foreach(var entry in serviceEntryList)
+        foreach (var entry in serviceEntryList)
         {
-            if(entry.ClaimType == ClaimType)
+            if (entry.ClaimType == ClaimType)
             {
                 var item = entry.ServiceName.ToString().Trim();
                 ServiceTypeList.Add(item);
@@ -586,8 +858,8 @@
             if (Adjustment)
             {
 
-                // new claim type on adjustment - change 
-                if(ScreenTypeChange && ServiceTypeList.Count > 0)
+                // new claim type on adjustment - change
+                if (ScreenTypeChange && ServiceTypeList.Count > 0)
                 {
                     // use pre-selected value from adjustment when
                     // switching back to that claim type.
@@ -610,10 +882,10 @@
                 {
                     // adjustment claim load - put selected service first.
                     serviceSelection = claim.Service.Trim(); // loaded from adjustment
-                    if(serviceSelection != "")
+                    if (serviceSelection != "")
                     {
 
-                        ServiceTypeList = OrderList(ServiceTypeList, serviceSelection); // put first in list  
+                        ServiceTypeList = OrderList(ServiceTypeList, serviceSelection); // put first in list
                     }
                 }
 
@@ -622,7 +894,7 @@
             {
                 if (ServiceTypeList.Count > 0)
                 {
-                    // screen type change non-adjustment - new claim - - 
+                    // screen type change non-adjustment - new claim - -
                     claim.Service = ServiceTypeList[firstEntry].ToString().Trim();
 
                 }
@@ -640,19 +912,23 @@
         }
     }
 
-    private List<string>  OrderList(List<string> names, string putThisNameFirst)
+    private List<string>
+        OrderList(List<string>
+            names, string putThisNameFirst)
     {
 
 
 
         // build a list with selected name first;
-        List<string> output = new List<string>();
+        List<string>
+            output = new List<string>
+                ();
 
         output.Add(putThisNameFirst);
-        foreach(var name in names)
+        foreach (var name in names)
         {
 
-            if(name != putThisNameFirst)
+            if (name != putThisNameFirst)
             {
 
                 output.Add(name);
@@ -673,11 +949,11 @@
 
     private string claimTypeLiteral = "Medical";
 
-    private  void dtMedical()
+    private void dtMedical()
     {
         dt("m");
     }
-    private  void dtDental()
+    private void dtDental()
     {
         dt("d");
     }
@@ -707,8 +983,10 @@
             case "v": claimTypeLiteral = "Vision Services"; claimTypeColor = "yellow"; break;
             case "x": claimTypeLiteral = "Drug Services"; claimTypeColor = "limegreen"; break;
             default: claimTypeLiteral = "unknown"; claimTypeColor = "aqua"; break;
-
         }
+
+        // set claim type field labels based on internal class and/or claim type color...
+        SetTypeLabels(internalClass, newType, labelColor);
 
         SelectServicesByType(newType, IsAdjustment, true);
 
@@ -741,30 +1019,41 @@
     }
 
     // dropdown service list.
-    List<string> ServiceTypeList = new List<string>();
+    List<string>
+        ServiceTypeList = new List<string>
+            ();
 
 
 
     public async Task FileClaim()
     {
 
+        var badServiceDate = false;
+
+        var badConfineDate = false;
+        var badReleaseDate = false;
+        var badTooth = false;
+        var badEyeware = false;
+        var badDrug = false;
+
         try
         {
             // when not keyed a null is placed in the mapped field.
             // even though displays show valid data!
 
-            if(claim.Diagnosis1 == null) claim.Diagnosis1 = diagnoses[0];
-            if(claim.Diagnosis2 == null) claim.Diagnosis2 = diagnoses[0];
-            if(claim.Procedure1 == null) claim.Procedure1 = procedures[0];
-            if(claim.Procedure2 == null) claim.Procedure2 = procedures[0];
-            if(claim.Physician  == null) claim.Physician =  doctors[0];
-            if(claim.Clinic == null) claim.Clinic = clinics[0];
+            if (claim.Diagnosis1 == null) claim.Diagnosis1 = diagnoses[0];
+            if (claim.Diagnosis2 == null) claim.Diagnosis2 = diagnoses[0];
+            if (claim.Procedure1 == null) claim.Procedure1 = procedures[0];
+            if (claim.Procedure2 == null) claim.Procedure2 = procedures[0];
+            if (claim.Physician == null) claim.Physician = doctors[0];
+            if (claim.Clinic == null) claim.Clinic = clinics[0];
 
-            if(claim.Location == null) claim.Location = locations[0];
-            if(claim.PaymentAction == null) claim.PaymentAction = methods[0];
+            if (claim.Location == null) claim.Location = locations[0];
+            if (claim.PaymentAction == null) claim.PaymentAction = methods[0];
 
             var IsAdjustment = false;
-            var newAdjustmentId = sessionStorage.GetItem<string>("newAdjustmentId");
+            var newAdjustmentId = sessionStorage.GetItem<string>
+                ("newAdjustmentId");
             if (newAdjustmentId != null && newAdjustmentId != "")
             {
                 IsAdjustment = true;
@@ -772,8 +1061,9 @@
 
             claim.ClaimType = screenType;
 
-            // Verify customer has a plan. 
-            var hasPlan = sessionStorage.GetItem<string>("hasPlan");
+            // Verify customer has a plan.
+            var hasPlan = sessionStorage.GetItem<string>
+                ("hasPlan");
             if (hasPlan == "no")
             {
                 message = "A Plan must be assigned before a calim can be submitted.";
@@ -787,13 +1077,12 @@
             DateParm dateParm = new DateParm();
             dateParm.Input = claim.ScreenDateService;
             dateParm.Screen = "claim";
-            EditDate editDate = new EditDate();
             editDate.EditTheDate(dateParm);
+
+
             if (!dateParm.Valid)
             {
-                message = "Invalid service date.";
-                StateHasChanged();
-                return;
+                badServiceDate = true;
             }
             else
             {
@@ -805,9 +1094,9 @@
 
 
             // medical claim pre-edit confine and release dates.
-            // nulls will default to defualt date later in code. 
+            // nulls will default to defualt date later in code.
 
-            // work around - unable to evaluate issue on adjustment...  
+            // work around - unable to evaluate issue on adjustment...
 
             var dd = new DateTime(1753, 01, 01);
 
@@ -815,7 +1104,7 @@
             if (claim.ClaimType == "m")
             {
                 // on adj formatter sets field to "". may come in as null....
-                if(claim.ScreenDateConfine == null || claim.ScreenDateConfine == "")
+                if (claim.ScreenDateConfine == null || claim.ScreenDateConfine == "")
                 {
                     claim.DateConfine = dd;
                 }
@@ -827,10 +1116,7 @@
                     editDate.EditTheDate(dateParm);
                     if (!dateParm.Valid)
                     {
-                        message = "Invalid confine date.";
-                        StateHasChanged();
-                        return;
-
+                        badConfineDate = true;
 
                     }
                     else
@@ -856,9 +1142,7 @@
                     editDate.EditTheDate(dateParm);
                     if (!dateParm.Valid)
                     {
-                        message = "Invalid release date.";
-                        StateHasChanged();
-                        return;
+                        badReleaseDate = true;
 
                     }
                     else
@@ -875,10 +1159,12 @@
 
             } /* end pre edits on dates*/
 
-            if(claim.ClaimDescription == null) { claim.ClaimDescription = "";  }
-            if(claim.Referral == null ) { claim.Referral = ""; }
+            if (claim.ClaimDescription == null) { claim.ClaimDescription = ""; }
+            if (claim.Referral == null) { claim.Referral = ""; }
 
             /* edits for type fields */
+
+
 
             var toothNumber = claim.ToothNumber;
             if (claim.ClaimType == "d")
@@ -887,15 +1173,13 @@
                 var valid = Int32.TryParse(toothNumber.ToString(), out tooth);
                 if (!valid)
                 {
-                    message = "Invalid Tooth Number";
-                    StateHasChanged();
-                    return;
+                    badTooth = true;
+
                 }
                 if (tooth == 0)
                 {
-                    message = "Invalid Tooth Number - must not be zero.";
-                    StateHasChanged();
-                    return;
+                    badTooth = true;
+
                 }
 
             }
@@ -908,15 +1192,11 @@
                 Match m = Regex.Match(eyeware, validEx, RegexOptions.IgnoreCase);
                 if (!m.Success)
                 {
-                    message = "Invalid Eyeware Name - msut be numbers or letters.";
-                    StateHasChanged();
-                    return;
+                    badEyeware = true;
                 }
                 if (eyeware == "")
                 {
-                    message = "Invalid Eyeware Name - msut be filled in.";
-                    StateHasChanged();
-                    return;
+                    badEyeware = true;
                 }
 
             }
@@ -929,16 +1209,14 @@
                 Match m = Regex.Match(drugName, validEx, RegexOptions.IgnoreCase);
                 if (!m.Success)
                 {
-                    message = "Invalid Drug Name - msut be numbers or letters.";
-                    StateHasChanged();
-                    return;
+                    badDrug = true;
+
                 }
                 if (drugName == "")
                 {
 
-                    message = "Invalid Drug Name - msut be filled in.";
-                    StateHasChanged();
-                    return;
+                    badDrug = true;
+
                 }
 
             }
@@ -951,8 +1229,11 @@
 
             ValidationResult r = new ValidationResult(" ");
             ValidationContext v = new ValidationContext(claim);
-            var result = new List<ValidationResult>();
+            var result = new List<ValidationResult>
+                ();
             message = "";
+            var prefix = " * ";
+
 
             bool isDataValid = Validator.TryValidateObject(claim, v, result, true);
             if (!isDataValid)
@@ -960,20 +1241,66 @@
                 foreach (var e in result)
                 {
 
+                    message += prefix;
                     message += e.ErrorMessage.ToString();
-                    message += '\n';
+
                 }
-                return;
             }
 
+
+            if (badServiceDate)
+            {
+                message += prefix;
+                message += "invalid date of service";
+            }
+
+            if (badConfineDate)
+            {
+                message += prefix;
+                message += "invalid confine date";
+            }
+
+            if (badReleaseDate)
+            {
+                message += prefix;
+                message += "invalid release date";
+            }
+
+
+            if (badTooth)
+            {
+                message += prefix;
+                message += "invalid tooth number";
+            }
+
+            if (badEyeware)
+            {
+                message += prefix;
+                message += "invalid eyeware";
+            }
+
+            if (badDrug)
+            {
+                message += prefix;
+                message += "invalid drug name";
+            }
+
+            var failedEdits = message.Length > 0;
+            if(failedEdits)
+            {
+                StateHasChanged();
+                return;
+            }
 
             /* EDITS PASSED BUILD NEW CLAIM OR ADJUSTMENT */
 
             /* GET CUSTOMER ID */
-            var custId = sessionStorage.GetItem<string>("custId");
+            var custId = sessionStorage.GetItem<string>
+                                      ("custId");
 
             /* get plan id */
-            claim.PlanId = sessionStorage.GetItem<string>("PlanId").Trim();
+            claim.PlanId = sessionStorage.GetItem<string>
+                ("PlanId").Trim();
 
             claim.CustomerId = custId.Trim();
             // todo : edit and set dates and total charge and claim id.
@@ -987,7 +1314,7 @@
 
             // generate new claim id number if not adjustment.
             string adjustedClaimId = "";
-            if(IsAdjustment == false)
+            if (IsAdjustment == false)
             {
                 claim.ClaimIdNumber = date.ToString("CL-MM-dd-yy-H:mm:ss");
             }
@@ -1045,12 +1372,12 @@
             var iPlanId = claim.PlanId;
 
             var calcResult = await CostHelperClass.CalculateCostValues(iPlanId,
-                                                  iService,
-                                                  claim.ClaimType,
-                                                  http,
-                                                  Env.url,
-                                                  sh,
-                                                  ph);
+            iService,
+            claim.ClaimType,
+            http,
+            Env.url,
+            sh,
+            ph);
 
             decimal cost = calcResult.cost;
             decimal covered = calcResult.covered;
@@ -1080,13 +1407,13 @@
 
 
                 // claim to be added is copy of existing claim; setting id=0 as doced did NOT
-                // solve 'attempt to insert value to identity'. So as in a new claim I 
+                // solve 'attempt to insert value to identity'. So as in a new claim I
                 // make a new claim from scratch and do not copy id in.
 
                 // will copy all props except id;
                 Claim adjustedToAdd = MakeGoodCopy(claim);
 
-                ClaimAddHelper addHelper = new ClaimAddHelper(http, Env.url);
+                ClaimAddHelper addHelper = new ClaimAddHelper(http, Env.url, sessionStorage);
                 var acResult = await addHelper.AddClaim(adjustedToAdd);
                 var ok = acResult.OK;
                 if (!ok)
@@ -1102,7 +1429,7 @@
 
 
 
-                ClaimAddHelper addHelper = new ClaimAddHelper(http, Env.url);
+                ClaimAddHelper addHelper = new ClaimAddHelper(http, Env.url, sessionStorage);
                 var acResult = await addHelper.AddClaim(claim);
                 var ok = acResult.OK;
                 if (!ok)
@@ -1123,7 +1450,7 @@
                 // /StampClaim/{form}
                 // ==================
 
-                StampAdjustementHelper stamp = new StampAdjustementHelper(http, Env.url);
+                StampAdjustementHelper stamp = new StampAdjustementHelper(http, Env.url, sessionStorage);
 
 
                 StampData stampData = new StampData();
@@ -1143,7 +1470,8 @@
                 }
 
                 // reset to null so claim screen is ok.
-                sessionStorage.SetItem<string>("newAdjustmentId", "");
+                sessionStorage.SetItem<string>
+                    ("newAdjustmentId", "");
                 // TempData["adjustedClaimId"] = null;
 
                 menuMessage = "Adjustment " + newAdjustmentId + " completed for claim " + adjustedClaimId + ".";
@@ -1157,7 +1485,8 @@
             }
 
             // set message for main menu
-            sessionStorage.SetItem<string>("MenuMessage", menuMessage);
+            sessionStorage.SetItem<string>
+                ("MenuMessage", menuMessage);
 
             // goto main menu
             navigationManager.NavigateTo("/menu");
@@ -1232,7 +1561,4 @@
         }
         return cost;
 
-    }
-
-
-}
+    } }

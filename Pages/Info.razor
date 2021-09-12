@@ -1,52 +1,52 @@
 ﻿
 
 
-@page "/info"
- 
-<div class="container">
+@page "/info" 
 
- 
+<style>
 
+    p { color: white; }
 
-<h2 style='color:goldenrod'> Insurance Information </h2>
-
-
-    <div id="centerText" margin-left: 200px >
+</style>
 
 
-<br>
-
-<p style="color:white">
-
-    This application allows you to sign up as a customer and enter claims.
-    You can adjust and pay claims. Claims have some unique fields: for instance
-    Medical claims have confine and release dates. The claim service you
-    select will be used with the customer plan to compute covered cost.
-
-    <br>
-
-</p><p style="color:white">
-    An administrator menu is used to list customers and change customer id or passwords.
-    This is for authorized users only.
-
-    <br>
-
-</p><p style="color:white">
-    The promotion code and email will be supplied by developer to limit use and provide authenitcation.
-    This site uses unique email but normally this would be authenticated with Facebook or an other provider.
+<h4 style="color:burlywood">Introduction</h4>
+<p> This is a demonstration web site only.  </p>
 
 
-</p> 
-
-<br>
-<br>
-
-
-    </div>
-    </div>
+<h4 style="color:burlywood">Baic Operation</h4>
+<p>
+    Customers register first. Select a unique custome id and password.
+    Before you can enter a claim you must select a plan.
+</p>
 
 
+<h4 style="color:burlywood">Claims</h4>
+<p>
+    You can enter claims. There are four claim types: medical, dental, vision and drug.
+    Based on the plan the coveragd amount will be calculated by service selected.
+</p>
 
-@code {
 
-}
+<h4 style="color:burlywood">History</h4>
+<p> You can review claim history. Optionl adjustments can be selected. You can also pay a claim. </p>
+
+
+<h4 style="color:burlywood">Style</h4>
+<p>
+    Claim and Update screens can have different styles and colors. Use style link and color
+    links for this purpose.
+</p>
+
+
+<h4 style="color:burlywood">Authorization</h4>
+<p> The developer will provide credential values to authorize your use upon request.  </p>
+
+
+<h4 style="color:burlywood">Administration</h4>
+<p>
+    The administrator can reset customer id's and passwords upon request. This function
+    is restricted.
+</p>
+
+@code { }

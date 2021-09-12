@@ -1,7 +1,8 @@
 ﻿@page "/classic"
 
 
-@inject IJSRuntime jsRuntime;
+@inject IJSRuntime JS;
+
 
 
 <style>
@@ -63,7 +64,7 @@
 
 <div class="container">
     <div class="row">
-        <h1 style="margin-left: 420px; color:aquamarine" class="starttitle">Insurance Company</h1>
+        <h1 style="margin-left: 420px; color:burlywood" class="starttitle">Insurance Company</h1>
     </div>
     <br />
 
@@ -97,7 +98,7 @@
 
         <div class="col">
 
-            <div id="carouselExampleCaptions" class="carousel slide" data-interval="4000" data-ride="carousel">
+            <div id="carouselExampleCaptions" @ref="cap" class="carousel slide" data-interval="4000" data-ride="carousel">
                 <ol class="carousel-indicators">
                     <li data-target="#carouselExampleCaptions" data-slide-to="0" class="active"></li>
                     <li data-target="#carouselExampleCaptions" data-slide-to="1"></li>
@@ -156,11 +157,11 @@
                         </div>
                     </div>
                 </div>
-                <a class="carousel-control-prev" href="#carouselExampleCaptions" role="button" data-slide="prev">
+                <a id="prev"  @ref="prev" class="carousel-control-prev" href="#carouselExampleCaptions" role="button" data-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                     <span class="sr-only">Previous</span>
                 </a>
-                <a class="carousel-control-next" href="#carouselExampleCaptions" role="button" data-slide="next">
+                <a id="next" @ref="next" class="carousel-control-next" href="#carouselExampleCaptions" role="button" data-slide="next">
                     <span class="carousel-control-next-icon" aria-hidden="true"></span>
                     <span class="sr-only">Next</span>
                 </a>
@@ -181,14 +182,33 @@
 
 @code{
 
+    private ElementReference cap;
+    private ElementReference prev;
+    private ElementReference next;
+    Boolean setupcompleted = false;
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+
+        try
         {
 
-            await jsRuntime.InvokeAsync<string>("initializeCarousel");
-            firstRender = false;
+            if (firstRender && setupcompleted == false)
+            {
+
+
+                await JS.InvokeAsync<string>("initializeCarousel", cap, prev, next);
+                firstRender = false;
+                setupcompleted = true; 
+            } 
+
+        }
+        catch(System.Exception ex)
+        {
+
+            Console.WriteLine("Classic OnAfterRwenderAsync: encountered an issue:");
+            Console.WriteLine(ex.Message.ToString());
+
         }
     }
 

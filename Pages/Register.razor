@@ -9,6 +9,9 @@
 
 @inject Blazored.SessionStorage.ISyncSessionStorageService sessionStorage
 
+
+@inject IEditDate editDate;
+
 @using A70Insurance.Models
 
 @using A70Insurance.Common;
@@ -54,7 +57,7 @@
 
 <div class="container">
 
-    <h4 margin="50px" align="center" style="color:white; font-style:italic">Register Customer</h4>
+    <h4 margin="50px" align="center" style="color:burlywood; font-style:italic">Register Customer</h4>
     <br />
     <div style='margin-left: 85px'>
 
@@ -118,7 +121,8 @@
                     @for (var i = 0; i < genders.Count; i++)
                     {
 
-                            <option>@genders[i]</option> 
+                        <option>@genders[i]</option>
+
                     }
                 </select>
 
@@ -165,8 +169,8 @@
 
 
                 <div class='col-md-4'>
-                    <button type='button' style="color:goldenrod"
-                            class='btn btn-outline-primary' @onclick="submit">
+                    <button type='button' style="color:white"
+                            class='btn btn-primary' @onclick="submit">
                         Register
                     </button>
                 </div>
@@ -174,14 +178,14 @@
 
                 <div class='col-md-3'>
                     <button type='button' style="color:white"
-                            class='btn btn-outline-primary' @onclick="signin">
+                            class='btn btn-primary' @onclick="signin">
                         Signin
                     </button> <br>
                 </div>
 
                 <div class='col-md-3'>
                     <button type='button' style="color:white"
-                            class='btn btn-outline-primary' @onclick="cancel">
+                            class='btn btn-primary' @onclick="cancel">
                         Cancel
                     </button> <br>
                 </div>
@@ -190,7 +194,7 @@
         </div>
 
         <div class="row">
-            <div style="color:lawngreen">
+            <div style="color:burlywood; margin-top:25px;">
                 @message
             </div>
         </div>
@@ -202,7 +206,7 @@
 
 @code {
 
-    // main layout event call back 
+    // main layout event call back
     [CascadingParameter]
     protected EventCallback<string> SignChange { get; set; }
 
@@ -251,30 +255,37 @@
 
     async private void submit()
     {
+        var badPromo = false;
+        var badEmail = false;
+        var badBirthDate = false;
+
 
         try
         {
             var promotionCode = await GetPromotionCode();
 
-            if(customer.PromotionCode != promotionCode)
+
+            if (customer.PromotionCode != promotionCode)
             {
-                message = "Invalid Promotion Code";
-                StateHasChanged();
-                return;
+                badPromo = true;
+                //message = "Invalid Promotion Code";
+                //StateHasChanged();
+                //return;
             }
 
             // normally email provider authenticates email.
-            if(customer.CustEmail != "1@2.3")
+            if (customer.CustEmail != "1@2.3")
             {
-                message = "Invalid Email.";
-                StateHasChanged();
-                return;
+                badEmail = true;
+                //message = "Invalid Email.";
+                //StateHasChanged();
+                //return;
             }
 
 
 
             var state = customer.CustState;
-            if(state == null || state == "")
+            if (state == null || state == "")
             {
                 state = "WA";
             }
@@ -286,14 +297,14 @@
             // before checking valid state.
             DateParm dateParm = new DateParm();
             dateParm.Input = customer.ScreenBirthDate;
-            dateParm.Screen = "register";
-            EditDate editDate = new EditDate();
+            dateParm.Screen = "register"; 
             editDate.EditTheDate(dateParm);
             if (!dateParm.Valid)
             {
-                message = dateParm.Message;
-                StateHasChanged();
-                return;
+                badBirthDate = true;
+                // message = dateParm.Message;
+                // StateHasChanged();
+                // return;
             }
             else
             {
@@ -317,8 +328,33 @@
                     message += e.ErrorMessage.ToString();
                     message += '\n';
                 }
+            }
+
+            if (badPromo)
+            {
+                message += "invalid promotion code";
+                message += '\n';
+            }
+
+            if (badEmail)
+            {
+                message += "invalid e-mail entered";
+                message += '\n';
+            }
+
+            if (badBirthDate)
+            {
+                message += "invalid birth date entered";
+                message += '\n';
+            }
+
+            /* edits completed send error message if required. */
+            if (message.Length > 0)
+            {
+                StateHasChanged();
                 return;
             }
+
 
             var custId = customer.CustId.ToString().Trim();
             var dupck = await DuplicateCheck(custId);
@@ -364,7 +400,7 @@
 
 
             HttpContent content = m.Content;
-            var token = await content.ReadAsStringAsync(); 
+            var token = await content.ReadAsStringAsync();
             if (token == null)
             {
                 message = "Unexpected issue.";
@@ -391,7 +427,7 @@
             var msg = "Customer registered successfully";
             sessionStorage.SetItem<string>("MenuMessage", msg);
 
-            // Reset Links in Main Layout by Event Callback: 
+            // Reset Links in Main Layout by Event Callback:
             await SignChange.InvokeAsync("in");
 
             // turn admin backdoor off
@@ -400,7 +436,7 @@
             navigationManager.NavigateTo("/plan");
 
         }
-        catch(System.Exception ex)
+        catch (System.Exception ex)
         {
 
             message = "Could not complete registratoin " + ex.Message.ToString();
@@ -450,17 +486,17 @@
         catch (System.Exception ex)
         {
             Console.WriteLine("Duplicate Check: Exception on call: " + ex.Message.ToString());
-            return "ex"; // stop subsequent logic. if error. 
+            return "ex"; // stop subsequent logic. if error.
         }
 
-        if(m == null)
+        if (m == null)
         {
             return "down";
         }
 
 
         var dup = "no-dup";
-        if(m.IsSuccessStatusCode)
+        if (m.IsSuccessStatusCode)
         {
             dup = "dup";
         }

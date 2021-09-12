@@ -6,7 +6,13 @@ using A70Insurance.Models;
 
 namespace A70Insurance 
 {
-    public class EditDate
+
+    public interface IEditDate
+    {
+        public void EditTheDate(DateParm dateParm); 
+    } 
+
+    public class EditDate : IEditDate
     {
 
         private int currentYear = 0;
@@ -31,6 +37,14 @@ namespace A70Insurance
             {
                 dateParm.Valid = false;
                 dateParm.Message = "Date not numeric.";
+                return;
+            }
+
+            var len = regularDate.Length;
+            if(len != 6 && len != 8)
+            {
+                dateParm.Valid = false;
+                dateParm.Message = "Date is invalid.";
                 return;
             }
 
@@ -95,7 +109,7 @@ namespace A70Insurance
             if (dateParm.Input == null)
             {
 
-                dateParm.Message = "invalid date null.";
+                dateParm.Message = "invalid date";
                 dateParm.Valid = false;
 
             }

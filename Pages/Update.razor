@@ -2,6 +2,7 @@
 @page "/update"
 
 @using System.ComponentModel.DataAnnotations;
+@using A70Insurance.StyleFeature
 
 @inject HttpClient http
 
@@ -9,10 +10,15 @@
 
 @inject Blazored.SessionStorage.ISyncSessionStorageService sessionStorage 
 
+@inject IScreenStyleFactory screenStyleFactory;
+
+@inject IEditDate editDate;
+
 @using A70Insurance.Models;
 
 
-@using Newtonsoft.Json
+@using Newtonsoft.Json 
+
 
 
 <style>
@@ -50,138 +56,192 @@
     .d1 {
         margin-right: 35px;
     }
+
+    /* sl  - style label class */
+
+    .sl {
+
+        color: @labelColor;
+    }
+
+    /* sm - style message class */
+
+     .sm {
+
+        color: @messageColor;
+    }
+
+      /* sh - style header class */
+
+     .sh {
+
+        color: @headerColor;
+    }
+
 </style>
 
 <div class="container">
 
-    <h4 margin="50px" align="center" style="color:white">Update Customer</h4>
-    <br />
-    <div style='margin-left: 165px'>
+    <div id="ApplyColorsHere" class="@externalClass" style="@styleHelper">
+
+        @if (externalClass == "Style")
+        {
+            // use expliciit style coding for burleywood. why?
+            // burleywood was not working as css color font was invisible.
+            <h4 margin="50px" align="center" style="color:burlywood">Update Customer</h4>
+        }
+        else
+        {
+            // use class sh for header color
+            <h4 margin="50px" align="center" style="@headerStyle">Update Customer</h4>
+        }
 
 
 
-        <div class="row justify-content-md-left">
-            <div class="d1 col-xs-3">
-                <label style="color:dodgerblue;" asp-for="CustFirst" class="st1 control-label">First Name:</label>
-                <input @bind-value="@customer.CustFirst" class="form-control" placeholder="First Name" type="text" />
-            </div>
-            <div class="d1 col-xs-3">
-                <label style="color:dodgerblue;" asp-for="CustMiddle" class="st1 control-label">Middle:</label>
-                <input @bind-value="@customer.CustMiddle" class="form-control" placeholder="Middle Name" type="text" />
-            </div>
-            <div class="d1 col-xs-3">
-                <label style="color:dodgerblue;" asp-for="CustLast" class="st1 control-label">Last Name:</label>
-                <input @bind-value="@customer.CustLast" class="form-control" placeholder="Last Name" type="text" />
-            </div>
-        </div> <!-- end row 1 -->
 
-        <div class="row justify-content-md-left">
-
-            <div class="d1 col-xs-3">
-                <label style="color:dodgerblue;" asp-for="@customer.CustPassword" class="st1 control-label">Password:</label>
-                <input @bind-value="@customer.CustPassword" class="form-control" placeholder="Password" type="password" />
-            </div>
-            <div class="d1 col-xs-3">
-                <label style="color:dodgerblue;" asp-for="@customer.CustPassword" class="st1 control-label">Confirm Password:</label>
-                <input @bind-value="@customer.ConfirmPassword" class="form-control" placeholder="Confirm Password" type="password" />
-            </div>
+        <br />
+        <div style='margin-left: 165px'>
 
 
-        </div> <!-- end row 2 -->
 
-        <div class="row justify-content-md-left">
-            <div class="d1 col-xs-3">
-                <label style="color:dodgerblue;" asp-for="@customer.CustEmail" class="st1 control-label">Email:</label>
-                <input @bind-value="@customer.CustEmail" class="form-control" placeholder="Email" type="text" />
-            </div>
-            <div class="d1 col-xs-3">
-                <label style="color:dodgerblue;" asp-for="@customer.CustPhone" class="st1 control-label">Phone:</label>
-                <input @bind-value="@customer.CustPhone" class="form-control" placeholder="Phone" type="text" />
-            </div>
-        </div>
+            <div class="row justify-content-md-left">
+                <div class="d1 col-xs-3">
+                    <label asp-for="CustFirst" class="sl st1 control-label">First Name:</label>
+                    <input @bind-value="@customer.CustFirst" class="form-control" placeholder="First Name" type="text" />
+                </div>
+                <div class="d1 col-xs-3">
+                    <label asp-for="CustMiddle" class="sl st1 control-label">Middle:</label>
+                    <input @bind-value="@customer.CustMiddle" class="form-control" placeholder="Middle Name" type="text" />
+                </div>
+                <div class="d1 col-xs-3">
+                    <label asp-for="CustLast" class="sl st1 control-label">Last Name:</label>
+                    <input @bind-value="@customer.CustLast" class="form-control" placeholder="Last Name" type="text" />
+                </div>
+            </div> <!-- end row 1 -->
 
-        <div class="row justify-content-md-left">
-            <div class="d1 col-xs-3">
-                <label style="color:dodgerblue;" asp-for="@customer.ScreenBirthDate" class="st1 control-label">Birth Date:</label>
-                <input @bind-value="@customer.ScreenBirthDate" class="form-control" placeholder="mm/dd/yyyy" type="text" />
-            </div>
-            <div class="d1 col-xs-3">
-                <label style="color:dodgerblue;" asp-for="@customer.CustGender" class="st1 control-label">Gender:</label>
-                <select @bind="@customer.CustGender" class="form-control">
-                    @for (var i = 0; i < genders.Count; i++)
-                    {
-                        <option>@genders[i]</option>
-                    }
-                </select>
+            <div class="row justify-content-md-left">
 
-            </div>
+                <div class="d1 col-xs-3">
+                    <label asp-for="@customer.CustPassword" class="sl st1 control-label">Password:</label>
+                    <input @bind-value="@customer.CustPassword" class="form-control" placeholder="Password" type="password" />
+                </div>
+                <div class="d1 col-xs-3">
+                    <label asp-for="@customer.CustPassword" class="sl st1 control-label">Confirm Password:</label>
+                    <input @bind-value="@customer.ConfirmPassword" class="form-control" placeholder="Confirm Password" type="password" />
+                </div>
 
-            <div class="d1 col-xs-3">
-                <label style="color:dodgerblue;" asp-for="@customer.CustPlan" class="st1 control-label">Selected Plan:</label>
-                <br><div style="margin-left: 15px;font-size:larger; color:white;">@customer.CustPlan</div>
+
+            </div> <!-- end row 2 -->
+
+            <div class="row justify-content-md-left">
+                <div class="d1 col-xs-3">
+                    <label asp-for="@customer.CustEmail" class="sl st1 control-label">Email:</label>
+                    <input @bind-value="@customer.CustEmail" class="form-control" placeholder="Email" type="text" />
+                </div>
+                <div class="d1 col-xs-3">
+                    <label asp-for="@customer.CustPhone" class="sl st1 control-label">Phone:</label>
+                    <input @bind-value="@customer.CustPhone" class="form-control" placeholder="Phone" type="text" />
+                </div>
             </div>
 
-        </div> <!-- end row 2 -->
+            <div class="row justify-content-md-left">
+                <div class="d1 col-xs-3">
+                    <label asp-for="@customer.ScreenBirthDate" class=" sl st1 control-label">Birth Date:</label>
+                    <input @bind-value="@customer.ScreenBirthDate" class="form-control" placeholder="mm/dd/yyyy" type="text" />
+                </div>
+                <div class="d1 col-xs-3">
+                    <label asp-for="@customer.CustGender" class=" sl st1 control-label">Gender:</label>
+                    <select @bind="@customer.CustGender" class="form-control">
+                        @for (var i = 0; i < genders.Count; i++)
+                        {
+                            <option>@genders[i]</option>
+                        }
+                    </select>
 
-        <div class="row justify-content-md-left">
-            <div class="d1 col-xs-3">
-                <label style="color:dodgerblue;" asp-for="@customer.CustAddr1" class="st1 control-label">Address 1:</label>
-                <input @bind-value="@customer.CustAddr1" class="form-control" placeholder="Address 1" type="text" />
+                </div>
+
+                <div class="d1 col-xs-3">
+                    <label asp-for="@customer.CustPlan" class=" sl st1 control-label">Selected Plan:</label>
+                    <br><div style="margin-left: 15px;font-size:larger; color:white;">@customer.CustPlan</div>
+                </div>
+
+            </div> <!-- end row 2 -->
+
+            <div class="row justify-content-md-left">
+                <div class="d1 col-xs-3">
+                    <label asp-for="@customer.CustAddr1" class=" sl st1 control-label">Address 1:</label>
+                    <input @bind-value="@customer.CustAddr1" class="form-control" placeholder="Address 1" type="text" />
+                </div>
+                <div class="d1 col-xs-3">
+                    <label asp-for="@customer.CustAddr2" class=" sl st1 control-label">Address 2:</label>
+                    <input @bind-value="@customer.CustAddr2" class="form-control" placeholder="Address 2" type="text" />
+                </div>
+            </div> <!-- end row 4 -->
+
+            <div class="row justify-content-md-left">
+                <div class="d1 col-xs-3">
+                    <label asp-for="@customer.CustCity" class=" sl st1 control-label">City:</label>
+                    <input @bind-value="@customer.CustCity" class="form-control" placeholder="City" type="text" />
+                </div>
+                <div class="d1 col-xs-3">
+                    <label asp-for="@customer.CustState" class=" sl st1 control-label">State:</label>
+                    <select @bind="@customer.CustState" class="form-control">
+                        @for (var i = 0; i < states.Count; i++)
+                        {
+                            <option>@states[i]</option>
+                        }
+                    </select>
+                </div>
+                <div class="d1 col-xs-3">
+                    <label asp-for="@customer.CustZip" class=" sl st1 control-label">Zip:</label>
+                    <input @bind-value="@customer.CustZip" class="form-control" placeholder="Zip" type="text" />
+                </div>
+
             </div>
-            <div class="d1 col-xs-3">
-                <label style="color:dodgerblue;" asp-for="@customer.CustAddr2" class="st1 control-label">Address 2:</label>
-                <input @bind-value="@customer.CustAddr2" class="form-control" placeholder="Address 2" type="text" />
-            </div>
-        </div> <!-- end row 4 -->
 
-        <div class="row justify-content-md-left">
-            <div class="d1 col-xs-3">
-                <label style="color:dodgerblue;" asp-for="@customer.CustCity" class="st1 control-label">City:</label>
-                <input @bind-value="@customer.CustCity" class="form-control" placeholder="City" type="text" />
-            </div>
-            <div class="d1 col-xs-3">
-                <label style="color:dodgerblue;" asp-for="@customer.CustState" class="st1 control-label">State:</label>
-                <select @bind="@customer.CustState" class="form-control">
-                    @for (var i = 0; i < states.Count; i++)
-                    {
-                        <option>@states[i]</option>
-                    }
-                </select>
-            </div>
-            <div class="d1 col-xs-3">
-                <label style="color:dodgerblue;" asp-for="@customer.CustZip" class="st1 control-label">Zip:</label>
-                <input @bind-value="@customer.CustZip" class="form-control" placeholder="Zip" type="text" />
+
+
+            <div class='row' style="margin-top: 30px">
+                <button @onclick="submit" style="margin-left: 250px ; margin-right: 20px"
+                        class="btn btn-primary">
+                    Update
+                </button>
+                <a type="button" href="/menu" class="btn btn-primary">Menu</a>
             </div>
 
-        </div>
+
+            <div class="row">
+
+                @if (externalClass == "Style")
+                {
+                    <span style="color:burlywood">
+                        @message
+                    </span>
+                }
+                else
+                {
+                    <span style="@messageStyle">
+                        @message
+                    </span>
+                }
 
 
+            </div>
 
-        <div class='row' style="margin-top: 30px">
-            <button @onclick="submit" style="color:white; margin-left: 250px ; margin-right: 20px"
-                    class="btn btn-outline-primary">
-                Update
-            </button>
-            <a type="button" href="/menu" style="color:white" class="btn btn-outline-primary">Menu</a>
-        </div>
-
-
-        <div class="row">
-            <span style="color:lawngreen">
-                @message
-            </span>
-        </div>
-
-    </div> <!-- margin left div -->
+        </div> <!-- margin left div -->
+    </div>
 </div>
 
 
-@code {
+@code { 
 
+    // main layout event call back
+    [CascadingParameter]
+    protected EventCallback<string> RefreshScreen { get; set; }
 
     private string message;
     private List<string> states = new List<string>()
-{
+    {
         { "WA" },
         { "CA" }
 
@@ -190,15 +250,28 @@
 
     private Customer customer = new Customer();
 
+    String styleHelper = "";
+    String externalClass = "Style";
+    String internalClass = "Style";
+    String labelColor = "dodgerblue";
+    String userColor = "white";
+    String messageColor = "burleywood";
+    String headerColor = "burleywood";
 
+    String defaultHeaderStyle = "color:goldenrod";
+    String defaultMessageStyle = "color:goldenrod";
+    String defaultLabelStyle = "color:dodgerblue";
 
+    String headerStyle = "color:burleywood";
+    String messageStyle = "color:burleywood";
+    String labelStyle = "color:dodgerblue";
 
-    protected  override void OnInitialized()
+    protected override void OnInitialized()
     {
         var custId = sessionStorage.GetItem<string>("custId");
         if (custId == null)
         {
-            navigationManager.NavigateTo("/"); // backdoor logic 
+            navigationManager.NavigateTo("/"); // backdoor logic
         }
 
         try
@@ -215,16 +288,37 @@
             // needed in any component that calls back to navigation using cascading paramerter
             // due to rendering exception when signin not used by custoner.
 
-            navigationManager.NavigateTo("/"); // backdoor logic 
+            navigationManager.NavigateTo("/"); // backdoor logic
         }
 
+        /* screen load = set colors and styles */
 
+        ApplyColorsAndStyles();
+        StateHasChanged();
+
+    }
+
+    public override Task SetParametersAsync(ParameterView parameters)
+    {
+
+        // for nextStyle and nextColor to rerender the page.
+        // get class for form.
+
+        /* screen refresh - style or color link clicked */
+
+        ApplyColorsAndStyles();
+        StateHasChanged();
+
+        return base.SetParametersAsync(parameters);
     }
 
     private  Customer ReadCustJson()
     {
         var json = sessionStorage.GetItem<string>("theCustomerAsJson");
-        customer = JsonConvert.DeserializeObject<Customer>(json);
+
+
+        customer = JsonConvert.DeserializeObject<Customer>
+    (json);
         customer.CustFirst = customer.CustFirst.Trim();
         customer.CustLast = customer.CustLast.Trim();
         customer.CustMiddle = customer.CustMiddle.Trim();
@@ -244,7 +338,53 @@
 
     }
 
+    protected void ApplyColorsAndStyles()
+    {
+        // call when screen loads and 
+        // call when colors or styles are changed
+        // in MainLayout.razor
 
+        var screenStyleObject = screenStyleFactory.getCurrentStyleForScreen(ifscreenName: "update");
+        if (screenStyleObject != null)
+        {
+            externalClass = screenStyleObject.externalClass;
+            // for color styles: outline and solid the
+            // java script will set the four colors
+            // including: header, label and message colors.
+            userColor = screenStyleObject.userColor;
+            labelColor = screenStyleObject.labelColor;
+            headerColor = screenStyleObject.headerColor;
+            messageColor = screenStyleObject.messageColor;
+            internalClass = screenStyleObject.internalClass;
+
+            headerStyle = defaultHeaderStyle;
+            labelStyle = defaultLabelStyle;
+            messageStyle = defaultMessageStyle;
+
+            // one of these is not used ?
+            if (internalClass == "Outline")
+            {
+                styleHelper = $"border-color:{userColor}";
+                headerStyle = defaultHeaderStyle;
+                labelStyle = defaultLabelStyle;
+                messageStyle = defaultMessageStyle;
+            }
+            if (internalClass == "Solid")
+            {
+                styleHelper = $"background-color:{userColor}";
+                headerStyle = $"color:{headerColor}";
+                labelStyle = $"color:{labelColor}";
+                messageStyle = $"color:{messageColor}";
+            }
+            if (internalClass == "Picture")
+            {
+                styleHelper = $"background-color:white";
+                headerStyle = $"color:white";
+                labelStyle = $"color:white";
+                messageStyle = $"color:white";
+            }
+        }
+    }
 
 
     private void menu()
@@ -255,7 +395,8 @@
 
     async private void submit()
     {
-        var oldPass = sessionStorage.GetItem<string>("OldPass") ?? "missing";
+        var oldPass = sessionStorage.GetItem<string>
+            ("OldPass") ?? "missing";
         var np = customer.CustPassword ?? "NewNotKeyed";
         var newPass = np.Trim();
 
@@ -268,7 +409,7 @@
         {
 
             if (confirm == "notKeyed" ||
-               customer.CustPassword != customer.ConfirmPassword)
+            customer.CustPassword != customer.ConfirmPassword)
             {
                 message = "Confirm password does not match.";
                 StateHasChanged();
@@ -279,7 +420,8 @@
 
         ValidationResult r = new ValidationResult(" ");
         ValidationContext v = new ValidationContext(customer);
-        var result = new List<ValidationResult>();
+        var result = new List<ValidationResult>
+            ();
         message = "";
 
         bool isDataValid = Validator.TryValidateObject(customer, v, result, true);
@@ -299,7 +441,6 @@
         DateParm dateParm = new DateParm();
         dateParm.Input = customer.ScreenBirthDate;
         dateParm.Screen = "update";
-        EditDate editDate = new EditDate();
         editDate.EditTheDate(dateParm);
         if (!dateParm.Valid)
         {
@@ -346,7 +487,8 @@
     }
 
 
-    private async Task<HttpResponseMessage> UpdateCustomer(Customer customer)
+    private async Task<HttpResponseMessage>
+        UpdateCustomer(Customer customer)
     {
         // /api/UpdateCustomer/
 
@@ -354,7 +496,8 @@
 
         string url = send + "/api/UpdateCustomer";
 
-        HttpContent item = JsonContent.Create<Customer>(customer);
+        HttpContent item = JsonContent.Create<Customer>
+            (customer);
 
         HttpRequestMessage req = new HttpRequestMessage()
         {
@@ -364,7 +507,8 @@
             Content = item
         };
 
-        var token = sessionStorage.GetItem<string>("A65TOKEN");
+        var token = sessionStorage.GetItem<string>
+            ("A65TOKEN");
         req.Headers.Add("a65token", token);
 
         HttpResponseMessage m = null;
@@ -390,7 +534,7 @@
         public string CustId { get; set; }
 
         [Required,
-         RegularExpression("^[a-zA-Z0-9\\s]*$", ErrorMessage = " password must only contains letters or numbers - required.")]
+        RegularExpression("^[a-zA-Z0-9\\s]*$", ErrorMessage = " password must only contains letters or numbers - required.")]
         public string CustPassword { get; set; }
 
         [System.ComponentModel.DataAnnotations.Schema.NotMapped]
@@ -399,7 +543,7 @@
         public string Encrypted { get; set; }
 
         [Required,
-         RegularExpression("^[a-zA-Z0-9.\\s]*$", ErrorMessage = " First Name must only contains letters or numbers and is required.")]
+        RegularExpression("^[a-zA-Z0-9.\\s]*$", ErrorMessage = " First Name must only contains letters or numbers and is required.")]
         public string CustFirst { get; set; }
 
         [RegularExpression("^[a-zA-Z0-9.\\s]*$", ErrorMessage = " Middle Name must only contains letters or numbers and is required.")]
@@ -407,11 +551,11 @@
         public string CustMiddle { get; set; }
 
         [Required,
-         RegularExpression("^[a-zA-Z.\\s]*$", ErrorMessage = "Last Name must contains letters and is required")]
+        RegularExpression("^[a-zA-Z.\\s]*$", ErrorMessage = "Last Name must contains letters and is required")]
         public string CustLast { get; set; }
 
         [Required,
-            RegularExpression("^([a-z0-9A-Z])(@)([a-z0-9A-Z])(\\.)([a-z0-9A-Z])$", ErrorMessage = "Invalid Email")]
+        RegularExpression("^([a-z0-9A-Z])(@)([a-z0-9A-Z])(\\.)([a-z0-9A-Z])$", ErrorMessage = "Invalid Email")]
 
         public string CustEmail { get; set; }
         // edit date routine edits this field. screen uses screenBirthDate below.
@@ -419,19 +563,19 @@
         public DateTime? CustBirthDate { get; set; }
 
         [Required,
-            RegularExpression("^[mfMF]+$", ErrorMessage = "Gender m f")]
+        RegularExpression("^[mfMF]+$", ErrorMessage = "Gender m f")]
 
         public string CustGender { get; set; }
         [Required,
-          Phone]
+        Phone]
         public string CustPhone { get; set; }
         [Required,
-           RegularExpression("^[a-zA-Z0-9#.\\s]*$", ErrorMessage = " address1 must only contains letters or numbers . # - required.")]
+        RegularExpression("^[a-zA-Z0-9#.\\s]*$", ErrorMessage = " address1 must only contains letters or numbers . # - required.")]
         public string CustAddr1 { get; set; }
         [RegularExpression("^\\s|[a-zA-Z0-9#.\\s]*$", ErrorMessage = "address2 must contains letters or numbers . #  if entered")]
         public string CustAddr2 { get; set; }
         [Required,
-          RegularExpression("^[a-zA-Z.\\s]*$", ErrorMessage = "City must contains letters and is required")]
+        RegularExpression("^[a-zA-Z.\\s]*$", ErrorMessage = "City must contains letters and is required")]
         public string CustCity { get; set; }
         public string CustState { get; set; }
         [Required]

@@ -51,7 +51,7 @@
     <br>
 
 
-    <h4 margin="50px" align="center" style="color:white; font-style:italic">Customer Sign-In</h4>
+    <h4 margin="50px" align="center" style="color:burlywood;">Customer Signin</h4>
     <br>
 
     <div style="color:dodgerblue">
@@ -73,13 +73,13 @@
         <br>
         <div class="form-group row justify-content-center">
             <div>
-                <button type="submit" style="color:goldenrod" class="btn btn-outline-primary"
+                <button type="submit"  class="btn btn-primary"
                         @onclick="signinUser">
                     Sign In
                 </button>
-                <a href="/" style="color:white" class="btn btn-outline-primary"> Cancel</a>
+                <a href="/"   class="btn btn-primary"> Cancel</a>
                 <br><br><br>
-                <span style='color:lawngreen'>
+                <span style='color:burlywood; font-size: larger;'>
                     @message
                 </span>
             </div>
@@ -357,7 +357,7 @@
     private void s(string msg)
     {
         // until i get d bug working
-        Console.WriteLine("signin debug: " + msg);
+       // Console.WriteLine("signin debug: " + msg);
     }
 
     protected String FormatScreenDate(string dbDate)
