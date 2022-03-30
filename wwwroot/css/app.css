@@ -27,6 +27,12 @@ app {
     align-items: center;
 }
 
+
+.top-row2 { /* allow to move up when scrolling through history */
+    height: 3.5rem; 
+    align-items: center;
+}
+
 .main {
     flex: 1;
 }
@@ -213,5 +219,135 @@ app {
 
 }
 
-.r1 { border-radius: 25px; }
+.r1 {
+    border-radius: 25px;
+}
+
+.g1menu {
+    color: aqua;
+    border-color: white;
+    margin-left: 20px;
+}
+
+.g2pay {
+    color: red;
+    border-color: white;
+    margin-left: 20px;
+}
+
+.g3adjust {
+    color: goldenrod;
+    border-color: white;
+    margin-left: 20px;
+}
+
+.g4stay {
+    color: lightgreen;
+    border-color: white;
+    margin-left: 20px;
+}
+
+
+.g4 {
+    color: lightgreen;
+    border-color: white;
+    margin-left: 20px;
+}
+
+
+.g4focus {
+    color: burlywood;
+    border-color: white;
+    margin-left: 20px;
+}
+
+
+.g4top {
+    color: lightgreen;
+    border-color: white;
+    margin-left: 20px;
+}
+
+
+.g4mid {
+    color: burlywood;
+    border-color: white;
+    margin-left: 20px;
+}
+
+
+.g4bottom {
+    color: lightcoral;
+    border-color: white;
+    margin-left: 20px;
+}
+
+
+.g4focus {
+    color: burlywood;
+    border-color: white;
+    margin-left: 20px;
+}
+
+
+
+.g5new {
+    color: aqua;
+    border-color: white;
+    margin-left: 20px;
+}
+
+
+
+
+.g5act1 {
+    color: burlywood;
+    border-color: white;
+    margin-left: 20px;
+}
+
+
+.g5act2 {
+    color: burlywood;
+    border-color: white;
+    margin-left: 20px;
+}
+
+.white { color: white; font-family: Arial; font-size:large }
+
+
+.dodgerblue {
+    color: dodgerblue;
+    font-family: Arial;
+    font-size: large
+}
+
+
+.burleywood {
+    color: burlywood;
+    font-family: Arial;
+    font-size: large
+} 
+
+
+.aqua {
+    color: aqua;
+    font-family: Arial;
+    font-size: large
+}
+
+.spacer {
+
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+.spaceleft {
+
+    margin-left: 15px;
+}
+
+html {
+    scroll-behavior: smooth;
+}
  

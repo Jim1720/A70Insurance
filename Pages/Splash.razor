@@ -30,7 +30,7 @@
     </div>
 
 
-    <footer width='95%'>
+    <div id="footer" width='95%'>
         <br>
         <!-- a60 additions at bottom -->
         <text class='t1' style="color:white;">2020 - A70Insurance - Blazor</text>
@@ -39,10 +39,11 @@
         <text class='t1' style='color:gray;'>Find about here...</text>
         <a href='/about' style="font-size: medium; color: burlywood">About</a>
         <text class='t1' style='color:gray;'>Time to buy...</text>
-        <a href='/register' style=" font-size:medium; color: burlywood">@friendlyDate</a>
-        <text class='t1' style='color:white;'> This is a demonstration website</text>
+        <a href='/register' style="font-size:medium; color: burlywood">@friendlyDate</a> 
+        <text class='t1' style='color:gray;'>or...</text>
+        <a href='/signin' style="font-size:medium; color: burlywood">Sign in</a>
 
-    </footer>
+    </div>
 
    </div>
 
@@ -50,8 +51,8 @@
     @code {
 
         static System.DateTime timeToBuy = System.DateTime.Now;
-        string friendlyDate = timeToBuy.ToString("MMMM d yyyy");
-
-
+        string friendlyDate = timeToBuy.ToString("MMMM d yyyy") 
+        + " "  
+        + timeToBuy.ToString("t"); 
 
     }

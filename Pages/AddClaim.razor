@@ -7,19 +7,24 @@
 
 @using System.ComponentModel.DataAnnotations;
 
-@inject NavigationManager navigationManager
+@inject NavigationManager navigationManager;
 
-@inject Blazored.SessionStorage.ISyncSessionStorageService sessionStorage
+@inject Blazored.SessionStorage.ISyncSessionStorageService sessionStorage;
 
+@inject IEditDate editDate;  
 
-@inject IScreenStyleFactory screenStyleFactory;
+@inject IScreenStyleFactory screenStyleFactory;   
 
+@inject IActionOperations actionOperations;
 
-@inject IEditDate editDate;
+@inject IFocusedClaim focusedClaim;
+
+@inject IHistorySettings historySettings;
+
 
 @using A70Insurance.Models
 @using A70Insurance.ClaimHelpers;
-@using A70Insurance.StyleFeature
+@using A70Insurance.StyleFeature; 
 
 @using System.Text.RegularExpressions;
 
@@ -149,7 +154,6 @@
                     }
 
                 </div> <!-- end of type buttons -->
-
                 <!-- put hidden field here so errors at bottom do not extend downard.-->
                 <!-- claim type gets stored here by java script  -->
                 <input style="visibility:hidden" id="hiddenType" type="text" asp-for="@claim.ClaimType" />
@@ -271,8 +275,8 @@
 
                 </div>
                 <!--
-    https://forums.asp.net/t/2165118.aspx?Select+Dropdownlist+in+Blazor
-    -->
+                https://forums.asp.net/t/2165118.aspx?Select+Dropdownlist+in+Blazor
+                -->
 
                 <div class="form-group row">
 
@@ -410,18 +414,18 @@
 
                 </div>
 
-                </div>
-
-
             </div>
 
 
+        </div>
 
 
-        </div> <!-- end of style div. -->
 
-    </div>
- 
+
+    </div> <!-- end of style div. -->
+
+</div>
+
 
 @code {
 
@@ -589,7 +593,6 @@
         }
 
     }
-
 
     public override Task SetParametersAsync(ParameterView parameters)
     {
@@ -774,6 +777,7 @@
         claim.Location = claim.Location.Trim();
         claim.Clinic = claim.Clinic.Trim();
         claim.PaymentAction = claim.PaymentAction.Trim();
+        
 
 
         SelectServicesByType(claim.ClaimType, IsAdjustment, false);
@@ -786,7 +790,7 @@
         var b = newAdjustmentId.Trim();
 
         message = b + " is the new adjustment claim id, adjusting claim id : " + a;
-
+         
 
         StateHasChanged();
 
@@ -1286,7 +1290,7 @@
             }
 
             var failedEdits = message.Length > 0;
-            if(failedEdits)
+            if (failedEdits)
             {
                 StateHasChanged();
                 return;
@@ -1410,6 +1414,8 @@
                 // solve 'attempt to insert value to identity'. So as in a new claim I
                 // make a new claim from scratch and do not copy id in.
 
+                claim.AdjustedClaimId = adjustedClaimId;
+
                 // will copy all props except id;
                 Claim adjustedToAdd = MakeGoodCopy(claim);
 
@@ -1440,7 +1446,9 @@
                 }
             }
 
+            var action = "";
 
+            var claimId = "";
 
             var menuMessage = "";
 
@@ -1476,17 +1484,48 @@
 
                 menuMessage = "Adjustment " + newAdjustmentId + " completed for claim " + adjustedClaimId + ".";
 
+                ClaimIdToAdjust = newAdjustmentId;
+
+                claimId = newAdjustmentId;
+
+                action = "Adjustment";
+
+
             }
             else
             {
                 // new claim message
 
                 menuMessage = "New Claim " + claim.ClaimIdNumber + " created.";
+
+                claimId = claim.ClaimIdNumber;  
+
+                action = "New";
             }
 
             // set message for main menu
             sessionStorage.SetItem<string>
                 ("MenuMessage", menuMessage);
+
+            // remember the action for history screen.
+            if (Env.usingActions)
+            {
+                actionOperations.setAction(action, claimId, sessionStorage);
+            }
+
+            // set the focused claim
+            if (Env.usingFocus && historySettings.isFocusOn(sessionStorage))
+            {
+                focusedClaim.setFocusedClaim(claimId, sessionStorage);
+            }
+
+            // return to history screen if stay is used and toggled on.
+            if (Env.usingStay  && historySettings.isStayOn(sessionStorage))
+            {
+                // return to history
+                navigationManager.NavigateTo("/history");
+                return;
+            }
 
             // goto main menu
             navigationManager.NavigateTo("/menu");
@@ -1561,4 +1600,5 @@
         }
         return cost;
 
-    } }
+    } 
+}

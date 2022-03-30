@@ -39,13 +39,19 @@
         font-size: larger;
         border: none
     }
+
+    .isfixed { 
+        background-attachment: fixed; z-index: 1; 
+    }
+
+
 </style>
 
 <div class="main">
-    <div class="top-row px-4" style="background-color:black">
 
-        <a href="" class="ml-md-auto" style="color:burlywood">A70Insurance</a>
+    <div class="top-row px-4 isfixed" style="background-color:black">
 
+        <a href="" class="ml-md-auto" style="color:burlywood">A70Insurance</a> 
 
 
         @if (signedIn == false)
