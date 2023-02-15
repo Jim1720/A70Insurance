@@ -1,4 +1,10 @@
-﻿
+﻿<h3>Signin</h3>
+
+@code {
+
+}
+
+
 @page "/signin"
 
 @using System.ComponentModel.DataAnnotations
@@ -42,6 +48,11 @@
         font-size: larger;
         padding: 10px;
     }
+
+    .label { margin-top: 10px; }
+    .input { margin-top: 5px; } 
+    .r10 { margin-left: 10px;  border-radius: 10px;}
+    
 </style>
 
 
@@ -51,43 +62,60 @@
     <br>
 
 
-    <h4 margin="50px" align="center" style="color:burlywood;">Customer Signin</h4>
+    <h4 margin="50px" align="center" style="color:navajowhite;">Customer Signin</h4>
     <br>
 
     <div style="color:dodgerblue">
 
+         
 
-        <div class="form-group row justify-content-center">
-            <div class="col-xs-3">
-                <label class="control-label st1">Customer Id Number:</label>
+
+        <div class="row justify-content-center">
+            <div class="col-2">
+                <label class="control-label st1">Customer Id:</label>
                 <input type="text" class="form-control st1" @bind-value="@userInfo.custId">
             </div>
         </div>
-        <div class="form-group row justify-content-center">
-            <div class="col-xs-3">
-                <label class="control-label st1">Customer Password:</label>
+        <br />
+        <div class="row justify-content-center">
+            <div class="col-2">
+                <label class="control-label st1">Password:</label>
                 <input type="password" class="form-control st1" @bind-value="@userInfo.custPassword" />
             </div>
         </div>
+         
+        <br />
+        <br />
 
-        <br>
-        <div class="form-group row justify-content-center">
-            <div>
-                <button type="submit"  class="btn btn-primary"
-                        @onclick="signinUser">
-                    Sign In
-                </button>
-                <a href="/"   class="btn btn-primary"> Cancel</a>
-                <br><br><br>
-                <span style='color:burlywood; font-size: larger;'>
+        <div style='display: inline; margin-left: 540px; margin-top: 30px'>
+
+
+                 <button type="submit" class="r10 btn btn-primary"
+                             @onclick="signinUser">
+                             Sign In
+                 </button> 
+                
+                 
+                <button type="submit" class="r10 btn btn-primary"
+                        @onclick="cancelSignin">
+                    Cancel
+                </button> 
+
+        </div> 
+
+        <br />
+        <br />
+        <br />
+        <div class="row"> 
+            <div style="margin-left:440px">
+                <div style="color:navajowhite; font-size: larger;">
                     @message
-                </span>
-            </div>
+                </div>
+            </div> 
         </div>
 
-
-
-    </div>
+        </div>
+         
 
 </div>
 
@@ -96,7 +124,7 @@
 @code {
 
 
-    private string message;
+    private string? message = "Enter Customer Identification and Password...";
 
     UserInfo userInfo = new UserInfo();
 
@@ -111,17 +139,25 @@
 
         [Required,
             RegularExpression("^[A-Za-z0-9]*$", ErrorMessage = "Invalid customer Id")]
-        public string custId { get; set; }
+        public string? custId { get; set; }
         [Required,
          RegularExpression("^[A-Za-z0-9]*$", ErrorMessage = "Invalid customer password")]
-        public string custPassword { get; set; }
+        public string? custPassword { get; set; }
     }
 
+    private async void cancelSignin()
+    {
+
+        // testing bootstap upgrade
+        navigationManager.NavigateTo("/index");
+    } 
 
     private async void signinUser()
     {
         try
         {
+
+
             string token = "";
             HttpResponseMessage m;
 
@@ -150,14 +186,14 @@
                 foreach (var e in result)
                 {
 
-                    message += e.ErrorMessage.ToString();
+                    message += e.ErrorMessage as string;
                     message += '\n';
                 }
                 return;
             }
 
 
-            Customer customer = null;
+            Customer? customer = null;
             string json = "";
 
             // Lookup Customer
@@ -165,8 +201,14 @@
             {
                 var custId = userInfo.custId.ToString().Trim();
                 var send = Env.url;
+
+
+
                 var suffix = "/api/Signin70/" + custId;
                 var url = send + suffix;
+
+
+                Console.WriteLine("signin customer " + url);
 
                 m = await FindCustomer(url);
 
@@ -194,7 +236,7 @@
 
                 // user authenticated get token
 
-                token = customer.Encrypted;
+                token = customer.Encrypted.ToString();
                 if (token == "")
                 {
                     message = "Unexpected issue.";
@@ -314,11 +356,11 @@
 
 
         HttpRequestMessage req = new HttpRequestMessage()
-        {
+            {
 
-            RequestUri = new Uri(url),
-            Method = new HttpMethod("Get")
-        };
+                RequestUri = new Uri(url),
+                Method = new HttpMethod("Get")
+            };
 
 
         // cross origion blazor requests will omit Set-Cookine in resonse header otherwise.
@@ -357,7 +399,7 @@
     private void s(string msg)
     {
         // until i get d bug working
-       // Console.WriteLine("signin debug: " + msg);
+        Console.WriteLine("signin debug: " + msg);
     }
 
     protected String FormatScreenDate(string dbDate)
@@ -380,32 +422,32 @@
 
         [Required,
         System.ComponentModel.DataAnnotations.RegularExpression("^[a-zA-Z0-9]*$", ErrorMessage = " Customer ID must only contains letters or numbers - required.")]
-        public string CustId { get; set; }
+        public string? CustId { get; set; }
 
         [Required,
         RegularExpression("^[a-zA-Z0-9\\s]*$", ErrorMessage = " password must only contains letters or numbers - required.")]
-        public string CustPassword { get; set; }
+        public string? CustPassword { get; set; }
 
         [System.ComponentModel.DataAnnotations.Schema.NotMapped]
-        public string ConfirmPassword { get; set; }
+        public string? ConfirmPassword { get; set; }
 
-        public string Encrypted { get; set; }
+        public string? Encrypted { get; set; }
 
         [Required,
         RegularExpression("^[a-zA-Z0-9.\\s]*$", ErrorMessage = " First Name must only contains letters or numbers and is required.")]
-        public string CustFirst { get; set; }
+        public string? CustFirst { get; set; }
 
         [RegularExpression("^[a-zA-Z0-9.\\s]*$", ErrorMessage = " Middle Name must only contains letters or numbers and is required.")]
 
-        public string CustMiddle { get; set; }
+        public string? CustMiddle { get; set; }
 
         [Required,
         RegularExpression("^[a-zA-Z.\\s]*$", ErrorMessage = "Last Name must contains letters and is required")]
-        public string CustLast { get; set; }
+        public string? CustLast { get; set; }
 
         [Required,
         EmailAddress]
-        public string CustEmail { get; set; }
+        public string? CustEmail { get; set; }
         // edit date routine edits this field. screen uses screenBirthDate below.
         // once edited put data here.
         public DateTime? CustBirthDate { get; set; }
@@ -413,29 +455,30 @@
         [Required,
         RegularExpression("^[mfMF]+$", ErrorMessage = "Gender m f")]
 
-        public string CustGender { get; set; }
+        public string? CustGender { get; set; }
         [Required,
         Phone]
         public string CustPhone { get; set; }
         [Required,
         RegularExpression("^[a-zA-Z0-9#.\\s]*$", ErrorMessage = " address1 must only contains letters or numbers . # - required.")]
-        public string CustAddr1 { get; set; }
+        public string? CustAddr1 { get; set; }
         [RegularExpression("^\\s|[a-zA-Z0-9#.\\s]*$", ErrorMessage = "address2 must contains letters or numbers . #  if entered")]
-        public string CustAddr2 { get; set; }
+        public string? CustAddr2 { get; set; }
         [Required,
         RegularExpression("^[a-zA-Z.\\s]*$", ErrorMessage = "City must contains letters and is required")]
-        public string CustCity { get; set; }
-        public string CustState { get; set; }
+        public string? CustCity { get; set; }
+        public string? CustState { get; set; }
         [Required]
         [RegularExpression("^[0-9]*$", ErrorMessage = "US zip must only contains numbers = required.")]
 
-        public string CustZip { get; set; }
-        public string CustPlan { get; set; }
-        public string PromotionCode { get; set; }
-        public string AppId { get; set; }
-        public string ExtendColors { get; set; }
-        public string ClaimCount { get; set; }
+        public string? CustZip { get; set; }
+        public string? CustPlan { get; set; }
+        public string? PromotionCode { get; set; }
+        public string? AppId { get; set; }
+        public string? ExtendColors { get; set; }
+        public string? ClaimCount { get; set; }
 
-        public string ScreenBirthDate { get; set; }
+        public string? ScreenBirthDate { get; set; }
     }
 }
+

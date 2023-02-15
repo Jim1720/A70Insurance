@@ -7,47 +7,49 @@
 @inject HttpClient http 
 @inject Blazored.SessionStorage.ISyncSessionStorageService sessionStorage
 
+
+<style>
+
+    .st1 {
+        font-family: Arial;
+        font-size: large;
+    }
+</style>
+
 <div class="container">
 
-    <h2 style="margin-left:340px; margin-top:40px; margin-bottom: 40px; color:burlywood">Admin Action</h2>
+    <h2 style="margin-left:520px; margin-top:40px; margin-bottom: 40px; color:navajowhite">Admin Action</h2>
 
-    <div style='margin-left: 160px'>
+    <div style='margin-left: 260px'>
 
         <div class="row" form-control>
-            <div class="col-md-6">
+            <div class="col-3">
                 <div class="form-group">
-                    <label style="color:dodgerblue;" class="st1 control-label">Customer Id:</label>
-                    <div class="input-group">
-                        <span class="input-group-addon" id="basic-addon1">$</span>
-                        <input @bind-value="@action.CustomerId" class="form-control" placeholder="Customer Id" type="text" />
-                    </div>
+                    <label style="color:dodgerblue;" class="st1 control-label">Customer Id:</label> 
+                    <input @bind-value="@action.CustomerId" class="form-control" placeholder="Customer Id" type="text" />
                 </div>
             </div>
         </div>
-
+        <br />
         <div class="row" form-control>
-            <div class="col-md-6">
+            <div class="col-3">
                 <div class="form-group">
-                    <label style="color:dodgerblue;" class="st1 control-label">New Password:</label>
-                    <div class="input-group">
-                        <span class="input-group-addon" id="basic-addon1">$</span>
-                        <input @bind-value="@action.NewPassword" class="form-control" placeholder="New Password" type="text" />
-                    </div>
+                    <label style="color:dodgerblue;" class="st1 control-label">New Password:</label>  
+                     <input @bind-value="@action.NewPassword" class="form-control" placeholder="New Password" type="text" />
+                    
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-3">
                 <div class="form-group">
                     <label style="color:dodgerblue;" class="st1 control-label">Confirm New Password:</label>
-                    <div class="input-group">
-                        <span class="input-group-addon" id="basic-addon1">$</span>
-                        <input @bind-value="@action.NewPassword2" class="form-control" placeholder="Confirm Password" type="text" />
-                    </div>
+                    <input @bind-value="@action.NewPassword2" class="form-control" placeholder="Confirm Password" type="text" />
+                    
                 </div>
             </div>
         </div>
-
+        <br />
         <div class="row" form-control>
-            <div class="col-md-6">
+            <div class="col-3">
                 <div class="form-group">
                     <label style="color:dodgerblue;" class="st1 control-label">New Customer Id:</label>
                     <div class="input-group">
@@ -56,7 +58,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-3">
                 <div class="form-group">
                     <label style="color:dodgerblue;" class="st1 control-label">Confirm New Customer Id:</label>
                     <div class="input-group">
@@ -73,23 +75,23 @@
         <br />
         <div class="row" form-control>
 
-            <div class="col-md-3">
+            <div class="col-3">
                 <button id="sub" name="sub" @onclick="ListCustomers" class="b1 btn btn-primary" value="ListCustomers">List Customers</button>
             </div>
 
-            <div class="col-md-3">
+            <div class="col-3">
                 <button id="sub" name="sub" @onclick="ResetPassword" class="b1 btn btn-primary" value="ResetPassword">Reset Password</button>
             </div>
 
-            <div class="col-md-3">
+            <div class="col-3">
                 <button id="sub" name="sub" @onclick="ResetCustomerId" class="b1 btn btn-primary" value="ResetCustomerId">Reset Customer Id</button>
             </div>
         </div>
 
         <br />
         <div class="row" form-control>
-            <div class="col-md-6" style="color:burlywood">
-                <p style="color:burlywood">@message</p>
+            <div class="col-6" style="color:burlywood">
+                <p style="color:navajowhite">@message</p>
             </div>
         </div>
     </div>

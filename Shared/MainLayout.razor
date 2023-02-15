@@ -1,26 +1,30 @@
 ﻿@inherits LayoutComponentBase
 
+
 @inject Blazored.SessionStorage.ISyncSessionStorageService sessionStorage
 
 @using A70Insurance.StyleFeature
 
 @inject IScreenStyleManager screenStyleManager;
 @inject IScreenStyleFactory screenStyleFactory;
-@inject IScreenStyleList    screenStyleList;
+@inject IScreenStyleList screenStyleList;
 
 @implements IDisposable;
 @inject NavigationManager navigationManager;
 
 @using A70Insurance.Pages;
 
+@inject Blazored.SessionStorage.ISyncSessionStorageService sessionStorage
+ 
+
 <style>
     a {
         color: white;
         font-size: larger;
-    }
+        margin-left: 50px;
+    } 
 
     a:hover {
-
         color: burlywood;
         font-size: larger;
     }
@@ -40,81 +44,104 @@
         border: none
     }
 
-    .isfixed { 
-        background-attachment: fixed; z-index: 1; 
+    .isfixed {
+        background-attachment: fixed;
+        z-index: 1;
     }
-     
+
+    .a1 { margin-left: 140px; }
+
+    .a2 { margin-left: 150px; }
+
+    .linkleft { margin-left: 150px; }
+
+    .n1 { color: white; font-size: larger;}
+
+    
+    .n2 { color: burlywood; font-size: larger;}
+
+    .n3 {
+        color: white;
+        font-size: larger;
+        margin-left: 75px;
+    }
      
 
 </style>
 
-<div class="main">
+<div class="page"> 
 
-    <div class="top-row px-4 isfixed bg-dark">
+    <main>
 
-        <a href="" class="ml-md-auto" style="color:burlywood">A70Insurance</a> 
+        <nav class="navbar navbar-expand-lg bg-body-tertiary isfixed bg-dark">
+            <div class="container-fluid">
+                <a class="n2 navbar-brand" href="#">A70Insurance</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div  class="linkleft collapse navbar-collapse" id="navbarNavAltMarkup">
+                    <div class="navbar-nav"> 
 
+                        @if (signedIn == false)
+                        { 
+                            <a class="n1 nav-link" href="/Index">Start</a>
+                            <a class="n1 nav-link" href="/Classic">Classic</a>
+                            <a class="n1 nav-link" href="/Register">Register</a>
+                            <a class="n1 nav-link" href="/Signin">Sign In</a>
+                            <a class="n1 nav-link" href="/About">About</a>
+                            <a class="n1 nav-link" href="/Admin">Admin</a>
+                        }
+                        
+                        @if (signedIn == true)
+                        { 
+                            <a class="n3 nav-link" href="/menu">Menu</a>
+                            <a class="n3 nav-link" href="/update">Update</a> 
+                            <a class="n3 nav-link" href="/claim">Claim</a> 
+                            <a class="n3 nav-link" href="/history">History</a>
+                            @if (showStyleLink)
+                            {
+                                <button @onclick="NextStyle" 
+                                        class="n3 b4">@internalClass</button>
+                            }
 
-        @if (signedIn == false)
-        {
+                            @if (showColorLink)
+                            {
+                                <button @onclick="NextColor" style="@colorLinkStyle" 
+                                        class="n3 b4">@colorLinkColor</button>
+                            }
 
-            <a href="/" class="ml-md-auto">Splash</a>
+                            <a href="#" @onclick="signoutCustomer" 
+                               class="n3 nav-link">Sign Out</a> 
+                        }
 
-            <a href="/classic" class="ml-md-auto">Classic</a>
-
-            <a href="/register" class="ml-md-auto">Register</a>
-
-            <a href="/signin" class="ml-md-auto">Signin</a>
-
-            <a href="/about" class="ml-md-auto">About</a>
-
-            <a href="/admin" class="ml-md-auto">Admin</a>}
-
-        @if (signedIn == true)
-        {
-
-
-            <a href="/menu" class="ml-md-auto">Menu</a>
-
-            <a href="/update" class="ml-md-auto">Update</a>
-
-            <a href="/claim" class="ml-md-auto">Claim</a>
-
-            <a href="/history" class="ml-md-auto">History</a>
-
-            @if (showStyleLink)
-            {
-                <button @onclick="NextStyle" class="b4 ml-md-auto">@internalClass</button>
-            }
-
-            @if (showColorLink)
-            {
-                <button @onclick="NextColor" style="@colorLinkStyle" class="b4 ml-md-auto">@colorLinkColor</button>
-            }
-
-            <a href="#" @onclick="signoutCustomer" class="ml-md-auto">Sign Out</a>}
-
-        <a href="/" class="@at ml-md-auto"  style="color:burlywood">@info</a>
-
-    </div>
-
-    <div class="content px-4">
+                        <a href="/" class="@at n3 nav-link" 
+                           style="color:burlywood">@info</a>
 
 
-        <CascadingValue Value=SignChange>
- 
+                    </div>
+                </div>
+            </div>
+        </nav>
 
-                    @Body
-             
-
-         </CascadingValue>
-
-    </div>
+        <div class="content px-4">
 
 
+            <CascadingValue Value=SignChange>
+
+
+                @Body
+
+
+            </CascadingValue>
+
+        </div>
+
+
+    </main>
 </div>
 
-@code {
+            
+@code { 
 
     public string info = "Signed Out";
     public string at = "out";
@@ -131,8 +158,9 @@
     private String internalClass = "Style";
     private String currentScreen = "";
     private String fullScreenPath = "";
-    private String slash = "/";  
+    private String slash = "/";
     public String callback = "";
+
 
 
     EventCallback<string> SignChange => EventCallback.Factory.Create<string>(this, SignedInChange);
@@ -140,7 +168,7 @@
     EventCallback<string> StyleChange => EventCallback.Factory.Create<string>(this, NextStyle);
 
     EventCallback<string> ColorChange => EventCallback.Factory.Create<string>(this, NextColor);
-     
+
 
     protected override void OnInitialized()
     {
@@ -150,7 +178,6 @@
         navigationManager.LocationChanged += HasLocationChanged;
 
     }
-
 
 
     public void ScreenRefreshAssignment(Object o)
@@ -165,7 +192,7 @@
 
 
     private void HasLocationChanged(Object sender, LocationChangedEventArgs e)
-    { 
+    {
 
         var location = e.Location;
 
@@ -193,7 +220,7 @@
 
             StateHasChanged();
 
-        } 
+        }
 
     }
 
@@ -218,7 +245,9 @@
     {
         // unsubscribe
         navigationManager.LocationChanged -= HasLocationChanged;
-    } 
+    }
+
+
 
     public void SignedInChange(string action)
     {
@@ -254,12 +283,11 @@
 
     }
 
-     
 
 
     public void NextStyle()
     {
-        
+
 
         // get next style for screen
         screenStyleFactory.getNextStyle(ifscreenName: this.currentScreen);
@@ -278,7 +306,7 @@
 
     public void NextColor()
     {
-        
+
 
         // get next style for screen
         screenStyleFactory.getNextColor(ifscreenName: this.currentScreen);
@@ -347,8 +375,5 @@
         sessionStorage.SetItem("custId", ""); // signout customer for back door checking
         SignedInChange("out");
     }
-
-
-
 
 }

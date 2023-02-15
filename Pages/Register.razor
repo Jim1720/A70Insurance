@@ -10,13 +10,16 @@
 @inject Blazored.SessionStorage.ISyncSessionStorageService sessionStorage
 
 
+
 @inject IEditDate editDate;
 
 @using A70Insurance.Models
 
 @using A70Insurance.Common;
 
-@using Newtonsoft.Json
+@using Newtonsoft.Json; 
+
+@using System.Text.RegularExpressions;
 
 <style>
 
@@ -51,47 +54,49 @@
     }
 
     .d1 {
-        margin-right: 35px;
+        margin-left: 1px;
     }
+
+    .b3 { margin-left: 50px; border-radius: 10px; }
+
 </style>
 
 <div class="container">
 
-    <h4 margin="50px" align="center" style="color:burlywood; font-style:italic">Register Customer</h4>
+    <h4 style="margin-left: 450px; color:navajowhite;">Register Customer</h4>
     <br />
-    <div style='margin-left: 85px'>
+    <div style='margin-left: 185px'>
 
-        <div class="row justify-content-md-left">
+        <div class="form-group row gx-1">
 
-            <div class="d1 col-xs-3">
+            <div class="d1 col-3">
                 <label style="color:dodgerblue;" asp-for="@customer.CustId" class="st1 control-label">Customer Id:</label>
                 <input @bind-value="@customer.CustId" class="form-control" placeholder="Customer Id" type="text" />
             </div>
-            <div class="d1 col-xs-3">
+            <div class="d1 col-3">
                 <label style="color:dodgerblue;" asp-for="@customer.CustPassword" class="st1 control-label">Password:</label>
                 <input @bind-value="@customer.CustPassword" class="form-control" placeholder="Password" type="password" />
             </div>
-            <div class="d1 col-xs-3">
+            <div class="d1 col-3">
                 <label style="color:dodgerblue;" asp-for="@customer.CustPassword" class="st1 control-label">Confirm Password:</label>
                 <input @bind-value="@customer.ConfirmPassword" class="form-control" placeholder="Confirm Password" type="password" />
-            </div>
-            <div class="d1 col-xs-3">
-                <label style="color:dodgerblue;" asp-for="@customer.PromotionCode" class="st1 control-label">Promotion code:</label>
-                <input @bind-value="@customer.PromotionCode" class="form-control" placeholder="Promotion Code" type="text" />
-            </div>
+            </div> 
 
+           
         </div> <!-- end row 1 -->
 
-        <div class="row justify-content-md-left">
-            <div class="d1 col-xs-3">
+        <br />
+
+        <div class="form-group row gx-1">
+            <div class="d1 col-3">
                 <label style="color:dodgerblue;" asp-for="CustFirst" class="st1 control-label">First Name:</label>
                 <input @bind-value="@customer.CustFirst" class="form-control" placeholder="First Name" type="text" />
             </div>
-            <div class="d1 col-xs-3">
+            <div class="d1 col-3">
                 <label style="color:dodgerblue;" asp-for="CustMiddle" class="st1 control-label">Middle:</label>
                 <input @bind-value="@customer.CustMiddle" class="form-control" placeholder="Middle Name" type="text" />
             </div>
-            <div class="d1 col-xs-3">
+            <div class="d1 col-3">
                 <label style="color:dodgerblue;" asp-for="CustLast" class="st1 control-label">Last Name:</label>
                 <input @bind-value="@customer.CustLast" class="form-control" placeholder="Last Name" type="text" />
             </div>
@@ -99,23 +104,25 @@
 
 
 
-        <div class="row justify-content-md-left">
-            <div class="d1 col-xs-3">
+        <div class="form-group row gx-1">
+            <div class="d1 col-3">
                 <label style="color:dodgerblue;" asp-for="@customer.CustEmail" class="st1 control-label">Email:</label>
                 <input @bind-value="@customer.CustEmail" class="form-control" placeholder="Email" type="text" />
             </div>
-            <div class="d1 col-xs-3">
+            <div class="d1 col-3">
                 <label style="color:dodgerblue;" asp-for="@customer.CustPhone" class="st1 control-label">Phone:</label>
                 <input @bind-value="@customer.CustPhone" class="form-control" placeholder="Phone" type="text" />
             </div>
         </div>
 
-        <div class="row justify-content-md-left">
-            <div class="d1 col-xs-3">
+        <br />
+
+        <div class="form-group row gx-1">
+            <div class="d1 col-3">
                 <label style="color:dodgerblue;" asp-for="@customer.ScreenBirthDate" class="st1 control-label">Birth Date:</label>
                 <input @bind-value="@customer.ScreenBirthDate" class="form-control" placeholder="mm/dd/yyyy" type="text" />
             </div>
-            <div class="d1 col-xs-3">
+            <div class="d1 col-3">
                 <label style="color:dodgerblue;" asp-for="@customer.CustGender" class="st1 control-label">Gender:</label>
                 <select @bind="customer.CustGender" class="form-control">
                     @for (var i = 0; i < genders.Count; i++)
@@ -130,23 +137,32 @@
 
         </div> <!-- end row 2 -->
 
-        <div class="row justify-content-md-left">
-            <div class="d1 col-xs-3">
+        <br />
+
+        <div class="form-group row gx-1">
+            <div class="d1 col-3">
                 <label style="color:dodgerblue;" asp-for="@customer.CustAddr1" class="st1 control-label">Address 1:</label>
                 <input @bind-value="@customer.CustAddr1" class="form-control" placeholder="Address 1" type="text" />
             </div>
-            <div class="d1 col-xs-3">
+            <div class="d1 col-3">
                 <label style="color:dodgerblue;" asp-for="@customer.CustAddr2" class="st1 control-label">Address 2:</label>
                 <input @bind-value="@customer.CustAddr2" class="form-control" placeholder="Address 2" type="text" />
+            </div> 
+            <div class="col-3">
+                <label style="color:dodgerblue;" asp-for="@customer.PromotionCode" class="st1 control-label">Promotion code:</label>
+                <input @bind-value="@customer.PromotionCode" class="form-control" placeholder="Promo Code" type="text" />
             </div>
+
         </div> <!-- end row 4 -->
 
-        <div class="row justify-content-md-left">
-            <div class="d1 col-xs-3">
+        <br />
+
+        <div class="form-group row gx-1">
+            <div class="d1 col-3">
                 <label style="color:dodgerblue;" asp-for="@customer.CustCity" class="st1 control-label">City:</label>
                 <input @bind-value="@customer.CustCity" class="form-control" placeholder="City" type="text" />
             </div>
-            <div class="d1 col-xs-3">
+            <div class="d1 col-3">
                 <label style="color:dodgerblue;" asp-for="@customer.CustState" class="st1 control-label">State:</label>
                 <select @bind="@customer.CustState" class="form-control">
                     @for (var i = 0; i < states.Count; i++)
@@ -155,46 +171,42 @@
                     }
                 </select>
             </div>
-            <div class="d1 col-xs-3">
+            <div class="d1 col-3">
                 <label style="color:dodgerblue;" asp-for="@customer.CustZip" class="st1 control-label">Zip:</label>
                 <input @bind-value="@customer.CustZip" class="form-control" placeholder="Zip" type="text" />
             </div>
 
+
         </div>
 
+        <br />
+
+         <br />
+
+        <div style='display: inline; margin-left: 195px; margin-top: 30px'> 
+
+                
+                <button type='button' style="color:white"
+                        class='b3 btn btn-primary' @onclick="submit">
+                    Register
+                </button> 
+                
+                <button type='button' style="color:white"
+                        class='b3 btn btn-primary' @onclick="signin">
+                    Signin
+                </button> 
+                 
+                     
+                <button type='button' style="color:white"
+                        class='b3 btn btn-primary' @onclick="cancel">
+                    Cancel
+                </button> 
+                 
+
+        </div> 
 
         <div class="row">
-
-            <div class='row justify-content-md-center' style='margin-left: 195px; margin-top: 30px'>
-
-
-                <div class='col-md-4'>
-                    <button type='button' style="color:white"
-                            class='btn btn-primary' @onclick="submit">
-                        Register
-                    </button>
-                </div>
-
-
-                <div class='col-md-3'>
-                    <button type='button' style="color:white"
-                            class='btn btn-primary' @onclick="signin">
-                        Signin
-                    </button> <br>
-                </div>
-
-                <div class='col-md-3'>
-                    <button type='button' style="color:white"
-                            class='btn btn-primary' @onclick="cancel">
-                        Cancel
-                    </button> <br>
-                </div>
-
-            </div>
-        </div>
-
-        <div class="row">
-            <div style="color:burlywood; margin-top:25px;">
+            <div style="color:navajowhite; margin-top:25px;">
                 @message
             </div>
         </div>
@@ -224,7 +236,7 @@
     private void cancel()
     {
 
-        navigationManager.NavigateTo("/");
+        navigationManager.NavigateTo("/index");
     }
 
     private void signin()
@@ -271,27 +283,13 @@
                 //message = "Invalid Promotion Code";
                 //StateHasChanged();
                 //return;
-            }
-
-            // normally email provider authenticates email.
-            if (customer.CustEmail != "1@2.3")
-            {
-                badEmail = true;
-                //message = "Invalid Email.";
-                //StateHasChanged();
-                //return;
-            }
-
-
+            } 
 
             var state = customer.CustState;
             if (state == null || state == "")
             {
                 state = "WA";
-            }
-
-
-
+            } 
 
             // put screen date into edited field for edit and database update.
             // before checking valid state.
@@ -312,6 +310,13 @@
                 // to reduce 1 db call; signin does the same thing. so update
                 // does not make a db call.
                 customer.CustBirthDate = dateParm.Formatted;
+            }
+
+            var editEmail = customer.CustEmail as string; // in case null.
+            Regex emailPattern = new Regex(Env.ePattern);
+            if (!emailPattern.IsMatch(editEmail))
+            {
+                badEmail = true;
             }
 
             ValidationResult r = new ValidationResult(" ");
@@ -433,7 +438,11 @@
             // turn admin backdoor off
             sessionStorage.SetItem("adminIn", "");
 
-            navigationManager.NavigateTo("/plan");
+            /* for now goto menu until plan screen fixed....*/
+
+            navigationManager.NavigateTo("/menu");
+
+            // navigationManager.NavigateTo("/plan");
 
         }
         catch (System.Exception ex)
@@ -570,9 +579,8 @@
          RegularExpression("^[a-zA-Z.\\s]*$", ErrorMessage = "Last Name must contains letters and is required")]
         public string CustLast { get; set; }
 
-        [Required,
-            RegularExpression("^([a-z0-9A-Z])(@)([a-z0-9A-Z])(\\.)([a-z0-9A-Z])$", ErrorMessage = "Invalid Email")]
-
+        [Required]
+    
         public string CustEmail { get; set; }
         // edit date routine edits this field. screen uses screenBirthDate below.
         // once edited put data here.

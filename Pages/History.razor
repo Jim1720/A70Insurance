@@ -33,6 +33,12 @@
     h2 {
         color: dodgerblue;
     }
+
+    .dodgerblue { color: dodgerblue }
+    .white { color: white}
+    .burleywood { color: burlywood }
+    .space { margin-top: 15px;}
+     
 </style>
 
 <div class="container">
@@ -43,7 +49,7 @@
 
 
 
-    <h4 style="color: dodgerblue" align="center">Claim History</h4>
+    <h4 style="color: navajowhite" align="center">Claim History</h4>
 
 
     <p style="color:aquamarine"><em>@topMessage</em></p>
@@ -162,24 +168,24 @@
                 }
 
                 <div class="row">
-                    <div class="col-md-3 white">Claim Identification:</div>
-                    <div class="col-md-3 white">Status:</div>
-                    <div class="col-md-3 white">Type:</div>
-                    <div class="col-md-3 white">Sequence:</div>
+                    <div class="col-3 white">Claim Identification:</div>
+                    <div class="col-3 white">Status:</div>
+                    <div class="col-3 white">Type:</div>
+                    <div class="col-3 white">Sequence:</div>
                 </div>
 
                 <div class="row">
-                    <div class="col-md-3 burleywood"> @c.ClaimIdNumber</div>
-                    <div class="col-md-3 dodgerblue"> @c.ClaimStatus</div>
-                    <div class="col-md-3 dodgerblue"> @type</div>
-                    <div class="col-md-3 dodgerblue"> @sequence</div>
+                    <div class="col-3 burleywood"> @c.ClaimIdNumber</div>
+                    <div class="col-3 dodgerblue"> @c.ClaimStatus</div>
+                    <div class="col-3 dodgerblue"> @type</div>
+                    <div class="col-3 dodgerblue"> @sequence</div>
                 </div>
 
                 <div class="row">
-                    <div class="col-md-3 white">Patient:</div>
-                    <div class="col-md-3 white">Doctor:</div>
-                    <div class="col-md-3 white">Clinic:</div>
-                    <div class="col-md-3 white">Locaton:</div>
+                    <div class="col-3 white">Patient:</div>
+                    <div class="col-3 white">Doctor:</div>
+                    <div class="col-3 white">Clinic:</div>
+                    <div class="col-3 white">Locaton:</div>
                 </div>
 
                 var name = c.PatientFirst + " " + c.PatientLast;
@@ -188,10 +194,10 @@
                 dos = dos.Substring(0, dos.IndexOf(" "));
 
                 <div class="row">
-                    <div class="col-md-3 dodgerblue"> @name </div>
-                    <div class="col-md-3 dodgerblue"> @c.Physician</div>
-                    <div class="col-md-3 dodgerblue"> @c.Clinic</div>
-                    <div class="col-md-3 dodgerblue"> @c.Location</div>
+                    <div class="col-3 dodgerblue"> @name </div>
+                    <div class="col-3 dodgerblue"> @c.Physician</div>
+                    <div class="col-3 dodgerblue"> @c.Clinic</div>
+                    <div class="col-3 dodgerblue"> @c.Location</div>
                 </div>
 
 
@@ -254,10 +260,10 @@
 
 
                 <div class="row">
-                    <div class="col-md-3 white">Procedure:</div>
-                    <div class="col-md-3 white">Diagnosis:</div>
-                    <div class="col-md-3 white">Note:</div>
-                    <div class="col-md-3 white">Referral:</div>
+                    <div class="col-3 white">Procedure:</div>
+                    <div class="col-3 white">Diagnosis:</div>
+                    <div class="col-3 white">Note:</div>
+                    <div class="col-3 white">Referral:</div>
                 </div>
 
 
@@ -267,52 +273,52 @@
                 }
 
                 <div class="row">
-                    <div class="col-md-3 dodgerblue"> @procedures </div>
-                    <div class="col-md-3 dodgerblue"> @diag</div>
-                    <div class="col-md-3 dodgerblue"> @c.ClaimDescription</div>
-                    <div class="col-md-3 dodgerblue"> @c.Referral</div>
+                    <div class="col-3 dodgerblue"> @procedures </div>
+                    <div class="col-3 dodgerblue"> @diag</div>
+                    <div class="col-3 dodgerblue"> @c.ClaimDescription</div>
+                    <div class="col-3 dodgerblue"> @c.Referral</div>
                 </div>
 
                 <div class="row">
-                    <div class="col-md-3 white">Customer Plan:</div>
-                    <div class="col-md-3 white">Service:</div>
-                    <div class="col-md-3 white">Service Date:</div>
+                    <div class="col-3 white">Customer Plan:</div>
+                    <div class="col-3 white">Service:</div>
+                    <div class="col-3 white">Service Date:</div>
                 </div>
 
                 <div class="row">
-                    <div class="col-md-3 aqua"> @plan</div>
-                    <div class="col-md-3 aqua"> @service</div>
-                    <div class="col-md-3 dodgerblue"> @dos</div>
+                    <div class="col-3 aqua"> @plan</div>
+                    <div class="col-3 aqua"> @service</div>
+                    <div class="col-3 dodgerblue"> @dos</div>
                 </div>
 
 
                 <div class="row">
-                    <div class="col-md-3 white">Submitted Charge:</div>
-                    <div class="col-md-3 white">Plan Covered:</div>
-                    <div class="col-md-3 white">Balance Owed:</div>
-                    <div class="col-md-3 white">Payment Method:</div>
+                    <div class="col-3 white">Submitted Charge:</div>
+                    <div class="col-3 white">Plan Covered:</div>
+                    <div class="col-3 white">Balance Owed:</div>
+                    <div class="col-3 white">Payment Method:</div>
                 </div>
 
                 <div class="row">
-                    <div class="col-md-3 dodgerblue"> $@c.TotalCharge </div>
-                    <div class="col-md-3 dodgerblue"> $@c.CoveredAmount</div>
-                    <div class="col-md-3 dodgerblue"> $@c.BalanceOwed</div>
-                    <div class="col-md-3 dodgerblue"> @c.PaymentAction</div>
+                    <div class="col-3 dodgerblue"> $@c.TotalCharge </div>
+                    <div class="col-3 dodgerblue"> $@c.CoveredAmount</div>
+                    <div class="col-3 dodgerblue"> $@c.BalanceOwed</div>
+                    <div class="col-3 dodgerblue"> @c.PaymentAction</div>
                 </div>
 
                 if (c.ClaimType == "m" && showHeader == true)
                 {
 
                     <div class="row">
-                        <div class="col-md-3 white">Confinement Began:</div>
-                        <div class="col-md-3 white">Released:</div>
-                        <div class="col-md-3 white">Length Stay:</div>
+                        <div class="col-3 white">Confinement Began:</div>
+                        <div class="col-3 white">Released:</div>
+                        <div class="col-3 white">Length Stay:</div>
                     </div>
 
                     <div class="row">
-                        <div class="col-md-3 dodgerblue"> @confine </div>
-                        <div class="col-md-3 dodgerblue"> @release</div>
-                        <div class="col-md-3 dodgerblue"> @stay  </div>
+                        <div class="col-3 dodgerblue"> @confine </div>
+                        <div class="col-3 dodgerblue"> @release</div>
+                        <div class="col-3 dodgerblue"> @stay  </div>
                     </div>
 
                 }
@@ -321,11 +327,11 @@
                 {
 
                     <div class="row">
-                        <div class="col-md-3 white">Tooth Number:</div>
+                        <div class="col-3 white">Tooth Number:</div>
                     </div>
 
                     <div class="row">
-                        <div class="col-md-3 dodgerblue"> @c.ToothNumber </div>
+                        <div class="col-3 dodgerblue"> @c.ToothNumber </div>
                     </div>
                 }
 
@@ -333,11 +339,11 @@
                 {
 
                     <div class="row">
-                        <div class="col-md-3 white">Eyeware:</div>
+                        <div class="col-3 white">Eyeware:</div>
                     </div>
 
                     <div class="row">
-                        <div class="col-md-3 dodgerblue">@c.Eyeware </div>
+                        <div class="col-3 dodgerblue">@c.Eyeware </div>
                     </div>
                 }
 
@@ -345,11 +351,11 @@
                 {
 
                     <div class="row">
-                        <div class="col-md-3 white">Prescription Drug:</div>
+                        <div class="col-3 white">Prescription Drug:</div>
                     </div>
 
                     <div class="row">
-                        <div class="col-md-3 dodgerblue">@c.DrugName </div>
+                        <div class="col-3 dodgerblue">@c.DrugName </div>
                     </div>
 
                 }
@@ -363,15 +369,15 @@
                 {
 
                     <div class="row">
-                        <div class="col-md-3 white">Payment Amount:</div>
-                        <div class="col-md-3 white">Date:</div>
-                        <div class="col-md-3 white">Payment Plan:</div>
+                        <div class="col-3 white">Payment Amount:</div>
+                        <div class="col-3 white">Date:</div>
+                        <div class="col-3 white">Payment Plan:</div>
                     </div>
 
                     <div class="row">
-                        <div class="col-md-3 dodgerblue"> @payStayAmount </div>
-                        <div class="col-md-3 dodgerblue"> @payStayDate</div>
-                        <div class="col-md-3 dodgerblue"> @payStayPlan </div>
+                        <div class="col-3 dodgerblue"> @payStayAmount </div>
+                        <div class="col-3 dodgerblue"> @payStayDate</div>
+                        <div class="col-3 dodgerblue"> @payStayPlan </div>
                     </div>
                 }
 
@@ -384,15 +390,15 @@
                     var paymentDate = value.Substring(0, value.IndexOf(" "));
 
                     <div class="row">
-                        <div class="col-md-3 white">Payment Amount:</div>
-                        <div class="col-md-3 white">Date:</div>
-                        <div class="col-md-3 white">Payment Plan:</div>
+                        <div class="col-3 white">Payment Amount:</div>
+                        <div class="col-3 white">Date:</div>
+                        <div class="col-3 white">Payment Plan:</div>
                     </div>
 
                     <div class="row">
-                        <div class="col-md-3 dodgerblue"> $@c.PaymentAmount </div>
-                        <div class="col-md-3 dodgerblue"> @paymentDate</div>
-                        <div class="col-md-3 dodgerblue"> @c.PaymentPlan  </div>
+                        <div class="col-3 dodgerblue"> $@c.PaymentAmount </div>
+                        <div class="col-3 dodgerblue"> @paymentDate</div>
+                        <div class="col-3 dodgerblue"> @c.PaymentPlan  </div>
                     </div>
                 }
 
@@ -409,15 +415,15 @@
                     var dateAdded = value.Substring(0, value.IndexOf(" "));
 
                     <div class="row">
-                        <div class="col-md-3 burleywood">@action</div>
-                        <div class="col-md-3 burleywood">@date</div>
-                        <div class="col-md-3 burleywood">@what</div>
+                        <div class="col-3 burleywood">@action</div>
+                        <div class="col-3 burleywood">@date</div>
+                        <div class="col-3 burleywood">@what</div>
                     </div>
 
                     <div class="row">
-                        <div class="col-md-3 dodgerblue"> </div>
-                        <div class="col-md-3 dodgerblue"> @dateAdded</div>
-                        <div class="col-md-3 dodgerblue"> @c.AdjustedClaimId  </div>
+                        <div class="col-3 dodgerblue"> </div>
+                        <div class="col-3 dodgerblue"> @dateAdded</div>
+                        <div class="col-3 dodgerblue"> @c.AdjustedClaimId  </div>
                     </div>
 
                 }
@@ -433,15 +439,15 @@
                     var what = "with adjustment";
 
                     <div class="row">
-                        <div class="col-md-3 burleywood">@action</div>
-                        <div class="col-md-3 burleywood">@date</div>
-                        <div class="col-md-3 burleywood">@what</div>
+                        <div class="col-3 burleywood">@action</div>
+                        <div class="col-3 burleywood">@date</div>
+                        <div class="col-3 burleywood">@what</div>
                     </div>
 
                     <div class="row">
-                        <div class="col-md-3 dodgerblue"> </div>
-                        <div class="col-md-3 dodgerblue"> @adjustedDate</div>
-                        <div class="col-md-3 dodgerblue"> @c.AdjustingClaimId  </div>
+                        <div class="col-3 dodgerblue"> </div>
+                        <div class="col-3 dodgerblue"> @adjustedDate</div>
+                        <div class="col-3 dodgerblue"> @c.AdjustingClaimId  </div>
                     </div>
                 }
 
@@ -455,9 +461,13 @@
                 var allowAdjustment = (c.ClaimStatus == "Entered" || c.ClaimStatus == "Adjustment")
                                   &&
                                 (payStayRowUsed == false);
+                var allowCopy = (c.ClaimStatus == "Entered" || c.ClaimStatus == "Adjustment")
+                                  &&
+                                (payStayRowUsed == false);
 
-                anyOfAbove = allowAdjustment || allowPay;
-                var adjust = "adjust" + c.ClaimIdNumber;
+                anyOfAbove = allowAdjustment || allowPay || allowCopy;
+                var adjust = "adjust" + c.ClaimIdNumber; 
+                var copy = "copy" + c.ClaimIdNumber;
                 var pay = "pay..." + c.ClaimIdNumber;
 
                 // index into the claim array
@@ -470,17 +480,17 @@
 
                 var q = "'";
                 var cId = @q + c.ClaimIdNumber.Trim() + q;
+ 
+                <div class="spacer">
 
-                <div class="row spacer">
-
-                    <button class="g1menu btn btn-outline-primary"
+                    <button class="fs g1menu btn btn-outline-primary"
                             @onclick="menu">
                         Menu
                     </button>
 
                     @if (@envUsingStay)
                     {
-                        <button class="g4stay btn btn-outline-primary"
+                        <button class="fs g4stay btn btn-outline-primary"
                                 @onclick="toggleStay">
                             @stayLiteral
                         </button>
@@ -490,7 +500,7 @@
 
                     @if (@envUsingFocus)
                     {
-                        <button class="g4focus btn btn-outline-primary"
+                        <button class="fs g4focus btn btn-outline-primary"
                                 @onclick="toggleFocus">
                             @focusLiteral
                         </button>
@@ -498,7 +508,7 @@
                     }
 
 
-                    <button class="g5new btn btn-outline-primary spaceleft"
+                    <button class="fs g5new btn btn-outline-primary spaceleft"
                             @onclick="claim">
                         Claim
                     </button>
@@ -510,9 +520,22 @@
                                 name="sub"
                                 type="submit"
                                 @onclick="e => OnAdjustClaim(e, cId)"
-                                class="g3adjust btn btn-outline-warning">
+                                class="fs g3adjust btn btn-outline-warning">
                             Adjust
                         </button>
+
+                    }
+
+                    @if (allowCopy)
+                    {
+
+                        <button value=@copy
+                                name="sub"
+                                type="submit"
+                                    @onclick="e => OnCopyClaim(e, cId)"
+                                class="fs g5copy btn btn-outline-warning">
+                                            Copy
+                                        </button>
 
                     }
 
@@ -523,7 +546,7 @@
                         <button value=@pay
                                 name="sub"
                                 type="button"
-                                class="g2pay btn btn-outline-warning"
+                                class="fs g2pay btn btn-outline-warning"
                                 @onclick="e => OnPayCLaim(e, cId)">
                             Pay Claim
                         </button>
@@ -536,7 +559,7 @@
                         <button id="topButton"
                                 type="button"
                                 @onclick="e => OnPosition(e, top)"
-                                class="g4top btn btn-outline-warning">
+                                class="fs g4top btn btn-outline-warning">
                             Top
                         </button>
 
@@ -547,7 +570,7 @@
                         <button id="midButton"
                                 type="button"
                                 @onclick="e => OnPosition(e, mid)"
-                                class="g4mid btn btn-outline-warning">
+                                class="fs g4mid btn btn-outline-warning">
                             Mid
                         </button>
                     }
@@ -558,7 +581,7 @@
                         <button id="botButton"
                                 type="button"
                                 @onclick="e => OnPosition(e, bot)"
-                                class="g4bottom btn btn-outline-warning">
+                                class="fs g4bottom btn btn-outline-warning">
                             Bottom
                         </button>
                     }
@@ -569,7 +592,7 @@
                                 type="button"
                                 href="history#act1"
                                 @onclick="e => OnPosition(e, act1)"
-                                class="g5act1 btn btn-outline-warning">
+                                class="fs g5act1 btn btn-outline-warning">
                             @act1literal
                         </button>
                     }
@@ -581,7 +604,7 @@
                                 type="button"
                                 href="history#act2"
                                 @onclick="e => OnPosition(e, act2)"
-                                class="g5act2 btn btn-outline-warning">
+                                class="fs g5act2 btn btn-outline-warning">
                             @act2literal
                         </button>
                     }
@@ -642,7 +665,7 @@
             navigationManager.NavigateTo("/"); // backdoor logic
         }
 
-        var _send = Env.url;
+        var _send = Env.url; 
 
         string custId = "";
 
@@ -759,10 +782,22 @@
     {
 
         // todo see plan for var pass.
-        sessionStorage.SetItem<string>("historyAdjustedId", AdjClaimId);
+        sessionStorage.SetItem<string>("historyAdjustedId", AdjClaimId);    
         // goto claim screen.
         navigationManager.NavigateTo("/claim");
     }
+
+    
+
+    private void OnCopyClaim(MouseEventArgs e, string CopiedClaimId)
+    {
+
+        // todo see plan for var pass.
+        sessionStorage.SetItem<string>("historyCopiedClaimId", CopiedClaimId);
+        // goto claim screen.
+        navigationManager.NavigateTo("/claim");
+    }
+     
 
 
 

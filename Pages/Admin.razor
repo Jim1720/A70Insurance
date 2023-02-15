@@ -14,37 +14,36 @@
 
 @inject HttpClient http
 
+<style>
+
+    .st1 { font-family: Arial; font-size:large; }
+</style>
+
 <div class="container">
 
-    <h2 style="margin-left:340px; margin-top:40px; margin-bottom: 40px; color:burlywood">Admin Sign In</h2>
+    <h2 style="margin-left:540px; margin-top:40px; margin-bottom: 40px; color:navajowhite">Admin Sign In</h2>
 
-    <div style='margin-left: 320px'>
+    <div style='margin-left: 80px'>
 
-        <div class="row" form-control>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label style="color:dodgerblue;" class="st1 control-label">Admin Id:</label>
-                    <div class="input-group">
-                        <span class="input-group-addon" id="basic-addon1">$</span>
-                        <input @bind-value="@adminSignin.AdminId" class="form-control" placeholder="Admin Id" type="text" />
-                    </div>
+        <div class="row justify-content-center">
+                <div class="col-3">
+                    <label style="color:dodgerblue;" class="st1 control-label">Admin Id:</label>  
+                    <input @bind-value="@adminSignin.AdminId" class="form-control" placeholder="Admin Id" type="text" /> 
+                </div> 
+         </div>
+         <div class="row justify-content-center">
+                <div class="col-3">
+                    <label style="color:dodgerblue;" class="st1 control-label">Password:</label>  
+                        <input @bind-value="@adminSignin.Password" class="form-control" placeholder="Password" type="password" /> 
                 </div>
-                <div class="form-group">
-                    <label style="color:dodgerblue;" class="st1 control-label">Password:</label>
-                    <div class="input-group">
-                        <span class="input-group-addon" id="basic-addon1">$</span>
-                        <input @bind-value="@adminSignin.Password" class="form-control" placeholder="Password" type="password" />
-                    </div>
-                </div>
-
-            </div>
+                 
         </div>
 
 
         <br />
-        <div class="row" form-control>
+        <div>
 
-            <div class="col-md-6" style="color:lawngreen">
+            <div style="color:lawngreen; margin-left: 470px;" >
                 <button @onclick="signin" class="b1 btn btn-primary">Sign In</button>
             </div>
 
@@ -52,13 +51,11 @@
 
 
         <br />
-        <div class="row" form-control>
+        <div>
 
-            <div class="col-md-6" style="color:burlywood">
+            <div   style="margin-left: 380px;color:navajowhite"> 
 
-
-                <p style="color:burlywood">@message</p>
-
+                <p style="color:navajowhite">@message</p> 
 
             </div>
 
